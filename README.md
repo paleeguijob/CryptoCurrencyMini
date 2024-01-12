@@ -1,5 +1,5 @@
 # MyNotificationApp (for LineMan Wongni only)
-Show the list of Coin Currency
+This project was created by Jetpack Compose ,Dagger Hilt, Clean Android Architecture and using MVVM(Model-View-ViewModel) pattern. You can search by Coins, view detail of coin currency, load more coin list and Show Top 3 picks of coin by Rank.
 
 # Video
 
@@ -17,3 +17,6 @@ https://github.com/paleeguijob/CryptoCurrencyMini/assets/110875704/bc59be95-b9a2
 
 https://github.com/paleeguijob/CryptoCurrencyMini/assets/110875704/9acc4376-e16e-459e-8f15-eddd6727ebbc
 
+
+
+Project Created by RealAOFRealH don't Coppyright.
