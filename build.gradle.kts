@@ -1,0 +1,10 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
+    alias(libs.plugins.androidApplication) apply false
+    alias(libs.plugins.jetbrainsKotlinAndroid) apply false
+    alias(libs.plugins.daggerHilt) apply false
+    alias(libs.plugins.jetbrainKotlinJvm) apply false
+    alias(libs.plugins.kspCompiler) apply false
+    alias(libs.plugins.kotlinParcelize) apply false
+    alias(libs.plugins.serialization) apply false
+}

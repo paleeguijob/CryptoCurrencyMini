@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">CryptoCurrencyMini</string>
+
+    <!-- Coin Currency Common-->
+    <string name="coin_currency_common_search">Search</string>
+    <string name="coin_currency_common_search_error_title">Sorry</string>
+    <string name="coin_currency_common_search_error_message">No result match this keyword.</string>
+
+    <!-- Coin Currency Landing-->
+
+    <string name="coin_currency_coin_item_earn_coin_text">You can earn $10  when you invite a friend to buy crypto.</string>
+    <string name="coin_currency_coin_share_earn_coin_title">You con earn $10 coin</string>
+    <string name="coin_currency_coin_item_invite_your_friend">Invite your friend</string>
+    <string name="coin_currency_coin_list_toppick_title_top">Top</string>
+    <string name="coin_currency_coin_list_toppick_rank_title">rank crypto</string>
+    <string name="coin_currency_coin_list_title">Buy, sell and hold crypto</string>
+
+    <!--  Coin Currency Detail BottomSheet  -->
+    <string name="coin_currency_detail_coin_header_price">PRICE</string>
+    <string name="coin_currency_detail_coin_header_market_cap">MARKET CAP</string>
+    <string name="coin_currency_detail_coin_detail_button_text_go_to_web_site">Go to Website</string>
+
+</resources>
