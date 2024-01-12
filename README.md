@@ -19,4 +19,4 @@ https://github.com/paleeguijob/CryptoCurrencyMini/assets/110875704/9acc4376-e16e
 
 
 
-Project Created by RealAOFRealH don't Coppyright.
+Project Created by RealAOFRealHON (Rattapong Paleegui) don't Coppyright.
