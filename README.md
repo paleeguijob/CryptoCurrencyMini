@@ -1,4 +1,4 @@
-# MyNotificationApp (for LineMan Wongni only)
+# MyNotificationApp (for LineMan Wongnai Android only)
 This project was created by Jetpack Compose ,Dagger Hilt, Clean Android Architecture and using MVVM(Model-View-ViewModel) pattern. You can search by Coins, view detail of coin currency, load more coin list and Show Top 3 picks of coin by Rank.
 
 # Video
