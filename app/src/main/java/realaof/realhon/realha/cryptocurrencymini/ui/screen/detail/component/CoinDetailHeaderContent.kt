@@ -1,4 +1,4 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.detail.component
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import realaof.realhon.realha.cryptocurrencymini.R
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.detail.uimodel.CoinDetailUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Orange
 import realaof.realhon.realha.cryptocurrencymini.util.NUMBER_WITH_COMMA_AND_DOLLAR_SIGN_5DECIMAL
 import realaof.realhon.realha.cryptocurrencymini.util.toMoneyCurrency
@@ -55,7 +55,7 @@ fun CoinDetailHeaderContent(
         )
         CoinDetailTextWithPrice(
             name = stringResource(id = R.string.coin_currency_detail_coin_header_market_cap),
-            price = "${headerUi.marketCap}"
+            price = headerUi.marketCap
         )
     }
 }

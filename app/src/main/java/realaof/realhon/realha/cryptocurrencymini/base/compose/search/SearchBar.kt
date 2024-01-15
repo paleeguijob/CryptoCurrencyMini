@@ -1,7 +1,6 @@
 package realaof.realhon.realha.cryptocurrencymini.base.compose.search
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -14,20 +13,15 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import realaof.realhon.realha.cryptocurrencymini.R
-import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.SearchBg
+import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 
 @Composable
 fun SearchBar(
@@ -77,13 +71,13 @@ fun SearchBar(
                 onSearchAction.invoke(state.text)
             }
         ),
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(dimen.dimen_48),
         onValueChange = { newText ->
             state.updateText(newText)
             onValueChange(newText)
-        }
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(dimen.dimen_48),
     )
 }
 

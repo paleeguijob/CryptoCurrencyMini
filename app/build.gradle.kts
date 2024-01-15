@@ -72,6 +72,7 @@ dependencies {
 
     //Dagger Hilt
     implementation(libs.android.hilt)
+    implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.android.hilt.compiler)
 
     //Retrofit
@@ -106,6 +107,9 @@ dependencies {
 
     //Serialization json
     implementation(libs.kotlinx.serialization.json)
+
+    //GridLayout
+    implementation(libs.grid)
 
     //Testing
     testImplementation(libs.junit)

@@ -3,11 +3,11 @@ package realaof.realhon.realha.cryptocurrencymini.domian.mapper
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
 import realaof.realhon.realha.cryptocurrencymini.R
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.detail.uimodel.CoinDetailUiState
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.data.model.coindetail.CoinDetail
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.Coin
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.CoinCurrency
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Malachite
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.RedOrange
 import realaof.realhon.realha.cryptocurrencymini.util.NUMBER_WITH_2DECIMAL

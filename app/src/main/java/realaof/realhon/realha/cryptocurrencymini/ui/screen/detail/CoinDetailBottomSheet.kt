@@ -1,4 +1,4 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.detail
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.detail
 
 import android.content.Context
 import android.content.Intent
@@ -9,14 +9,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import kotlinx.coroutines.launch
 import realaof.realhon.realha.cryptocurrencymini.base.compose.loading.BaseLoading
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.detail.component.CoinDetailBottomSheetContent
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.detail.uimodel.CoinDetailUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.component.CoinDetailBottomSheetContent
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Orange
 import realaof.realhon.realha.cryptocurrencymini.util.NUMBER_WITH_COMMA_AND_DOLLAR_SIGN_5DECIMAL
 import realaof.realhon.realha.cryptocurrencymini.util.orFalse
@@ -28,9 +26,6 @@ fun CoinDetailBottomSheet(
     coinDetailUiState: CoinDetailUiState,
     onDismissRequest: (Boolean) -> Unit = {}
 ) {
-
-    val scope = rememberCoroutineScope()
-
     when {
         coinDetailUiState.loading.orFalse() -> BaseLoading()
 
@@ -67,21 +62,13 @@ private fun WrapContentCoinDetailBottomSheet(
         CoinDetailBottomSheetContent(
             coinDetailUi = coinDetailUi,
             onClickedWebsiteButton = { webUrl ->
-//                scope.launch {
-//
-//                    bottomSheetState.hide()
-//                }.invokeOnCompletion {
-//                    if (!bottomSheetState.isVisible) {
-//                        onDismissRequest(false)
-//                    }
-//                }
                 goToExternalBrowser(webUrl, context)
             }
         )
     }
 }
 
-private fun goToExternalBrowser(url: String, context: Context){
+private fun goToExternalBrowser(url: String, context: Context) {
     Intent(
         Intent.ACTION_VIEW, Uri.parse(url)
     ).apply {

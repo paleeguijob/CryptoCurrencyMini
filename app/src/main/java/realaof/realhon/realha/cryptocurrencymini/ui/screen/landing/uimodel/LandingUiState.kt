@@ -1,4 +1,4 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel
 
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color

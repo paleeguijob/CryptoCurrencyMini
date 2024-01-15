@@ -1,6 +1,7 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.landing
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.landing
 
-import androidx.compose.foundation.layout.PaddingValues
+import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,14 +12,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import realaof.realhon.realha.cryptocurrencymini.base.model.toBaseCommonError
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.detail.uimodel.CoinDetailUiState
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel.LandingUiState
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel.WindowSizeState
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.CoinCurrency
 import realaof.realhon.realha.cryptocurrencymini.domian.mapper.CoinCurrencyMapper
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.GetCoinDetailUseCase
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.GetCoinListUseCase
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.SearchCoinUseCase
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.WindowSizeState
+import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 import javax.inject.Inject
 
 @HiltViewModel
@@ -140,8 +142,8 @@ class LandingViewModel @Inject constructor(
             WindowWidthSizeClass.Compact -> {
                 _windowAdaptiveState.value = WindowSizeState(
                     portrait = WindowSizeState.WindowAdaptive(
-                        adaptiveColum = 1,
-                        paddingValues = PaddingValues()
+                        adaptiveColumn = 1,
+                        verticalArrangement = Arrangement.spacedBy(dimen.dimen_16)
                     )
                 )
             }
@@ -149,8 +151,9 @@ class LandingViewModel @Inject constructor(
             WindowWidthSizeClass.Medium -> {
                 _windowAdaptiveState.value = WindowSizeState(
                     portrait = WindowSizeState.WindowAdaptive(
-                        adaptiveColum = 1,
-                        paddingValues = PaddingValues()
+                        adaptiveColumn = 1,
+                        horizontalArrangement = Arrangement.spacedBy(dimen.dimen_8),
+                        verticalArrangement = Arrangement.spacedBy(dimen.dimen_16)
                     )
                 )
             }
@@ -158,8 +161,9 @@ class LandingViewModel @Inject constructor(
             WindowWidthSizeClass.Expanded -> {
                 _windowAdaptiveState.value = WindowSizeState(
                     landscape = WindowSizeState.WindowAdaptive(
-                        adaptiveColum = 3,
-                        paddingValues = PaddingValues()
+                        adaptiveColumn = 3,
+                        horizontalArrangement = Arrangement.spacedBy(dimen.dimen_8),
+                        verticalArrangement = Arrangement.spacedBy(dimen.dimen_16)
                     )
                 )
             }
@@ -187,6 +191,8 @@ class LandingViewModel @Inject constructor(
 
             else -> appendCoinList(response)
         }
+
+        Log.d("AOFAOF", "ViewModel: " + landingUiState.value.success?.coins?.size)
     }
 
     private fun appendCoinList(response: CoinCurrency) {

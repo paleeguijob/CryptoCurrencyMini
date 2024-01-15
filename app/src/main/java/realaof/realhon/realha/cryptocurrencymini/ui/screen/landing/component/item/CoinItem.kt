@@ -1,4 +1,4 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.component.item
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.item
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -33,7 +33,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import realaof.realhon.realha.cryptocurrencymini.R
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel.LandingUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Alabaster
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Malachite
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.MineShaft
@@ -59,15 +59,15 @@ fun CoinItem(
             }
     ) {
         Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(
                     vertical = dimen.dimen_20,
                     horizontal = dimen.dimen_16
-                ),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+                )
         ) {
             val painter = rememberAsyncImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)

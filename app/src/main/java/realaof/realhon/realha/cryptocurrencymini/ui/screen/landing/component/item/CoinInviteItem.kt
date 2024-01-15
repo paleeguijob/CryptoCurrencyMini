@@ -1,4 +1,4 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.component.item
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.item
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -61,13 +60,13 @@ fun CoinInviteItem(
             }
     ) {
         Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(
                     vertical = dimen.dimen_22,
                     horizontal = dimen.dimen_16
-                ),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+                )
         ) {
 
             Box(
@@ -138,6 +137,7 @@ fun TextInline(
         text = stringText,
         inlineContent = inlineContent,
         style = style,
+        maxLines = 2,
         modifier = modifier
     )
 }
@@ -146,8 +146,6 @@ fun TextInline(
 @Composable
 private fun CoinInviteItemPreview() {
     CoinInviteItem(
-        onClickedItemToShared = {
-
-        }
+        onClickedItemToShared = {}
     )
 }

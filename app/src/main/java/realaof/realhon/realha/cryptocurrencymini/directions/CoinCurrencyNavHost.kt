@@ -1,13 +1,10 @@
 package realaof.realhon.realha.cryptocurrencymini.directions
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.LandingScreen
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.LandingViewModel
 
 @Composable
 fun CoinCurrencyNavHost(

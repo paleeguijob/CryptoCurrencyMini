@@ -1,4 +1,4 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.detail.component
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import realaof.realhon.realha.cryptocurrencymini.R
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.detail.uimodel.CoinDetailUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.DustyGray
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Orange
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.SearchBg

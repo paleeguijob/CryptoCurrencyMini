@@ -1,4 +1,4 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.component.item
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.item
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -24,7 +24,7 @@ import androidx.core.graphics.toColorInt
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel.LandingUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Alabaster
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.DustyGray
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Malachite

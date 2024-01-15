@@ -7,7 +7,6 @@ import app.cash.turbine.turbineScope
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
@@ -16,9 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import realaof.realhon.realha.cryptocurrencymini.base.extensions.BaseUnitTest
 import realaof.realhon.realha.cryptocurrencymini.base.extensions.InstantTaskExecutorExtension
 import realaof.realhon.realha.cryptocurrencymini.base.model.toBaseCommonError
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.detail.uimodel.CoinDetailUiState
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel.LandingUiState
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel.WindowSizeState
 import realaof.realhon.realha.cryptocurrencymini.data.model.coindetail.CoinDetail
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.Coin
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.CoinCurrency
@@ -28,6 +24,10 @@ import realaof.realhon.realha.cryptocurrencymini.domian.mapper.CoinCurrencyMappe
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.GetCoinDetailUseCase
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.GetCoinListUseCase
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.SearchCoinUseCase
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.LandingViewModel
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.WindowSizeState
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantTaskExecutorExtension::class)
@@ -324,7 +324,7 @@ class LandingViewModelTest : BaseUnitTest() {
         val windowWidthSizeClass = WindowWidthSizeClass.Compact
         val expect = WindowSizeState(
             portrait = WindowSizeState.WindowAdaptive(
-                adaptiveColum = 1,
+                adaptiveColumn = 1,
                 paddingValues = PaddingValues()
             )
         )
@@ -344,7 +344,7 @@ class LandingViewModelTest : BaseUnitTest() {
         val windowWidthSizeClass = WindowWidthSizeClass.Medium
         val expect = WindowSizeState(
             portrait = WindowSizeState.WindowAdaptive(
-                adaptiveColum = 1,
+                adaptiveColumn = 1,
                 paddingValues = PaddingValues()
             )
         )
@@ -364,7 +364,7 @@ class LandingViewModelTest : BaseUnitTest() {
         val windowWidthSizeClass = WindowWidthSizeClass.Expanded
         val expect = WindowSizeState(
             landscape = WindowSizeState.WindowAdaptive(
-                adaptiveColum = 3,
+                adaptiveColumn = 3,
                 paddingValues = PaddingValues()
             )
         )
