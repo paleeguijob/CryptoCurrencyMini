@@ -49,10 +49,10 @@ fun CoinCurrencyList(
     onClickedItemToShared: (text: String) -> Unit,
     onLoadMore: (Int) -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
     val keyboard = LocalSoftwareKeyboardController.current
-    val scope = rememberCoroutineScope()
 
     when {
         windowSizeState.portrait != null -> {

@@ -108,11 +108,11 @@ private fun CoinTextWithPrice(
     price: String
 ) {
     Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+            .wrapContentHeight()
     ) {
         Text(
             text = name,
@@ -151,11 +151,11 @@ fun CoinTextWithTrend(
     changeUi: LandingUiState.LandingUi.CoinUi.ChangeUi
 ) {
     Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+            .wrapContentHeight()
     ) {
         Text(
             text = symbolUi.symbol,
@@ -185,9 +185,9 @@ fun TextWithTrend(
     changeUi: LandingUiState.LandingUi.CoinUi.ChangeUi
 ) {
     Row(
-        modifier = modifier,
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
     ) {
 
         if (changeUi.arrowIcon != null) {

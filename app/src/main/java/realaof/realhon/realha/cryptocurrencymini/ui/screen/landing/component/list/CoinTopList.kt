@@ -73,9 +73,9 @@ fun CoinTopList(
                 .align(alignment = Alignment.CenterHorizontally)
         ) {
             Row(
-                modifier = Modifier.align(alignment = Alignment.Center),
                 horizontalArrangement = Arrangement.spacedBy(dimen.dimen_8),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.align(alignment = Alignment.Center)
             ) {
                 coin3TopPicks.forEach { coin ->
                     CoinTopItem(
