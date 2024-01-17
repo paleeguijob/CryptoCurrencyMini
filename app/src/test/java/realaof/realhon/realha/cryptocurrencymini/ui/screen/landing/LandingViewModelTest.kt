@@ -1,7 +1,8 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.landing
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.landing
 
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import app.cash.turbine.turbineScope
 import io.mockk.coEvery
@@ -11,9 +12,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import realaof.realhon.realha.cryptocurrencymini.base.extensions.BaseUnitTest
-import realaof.realhon.realha.cryptocurrencymini.base.extensions.InstantTaskExecutorExtension
 import realaof.realhon.realha.cryptocurrencymini.base.model.toBaseCommonError
 import realaof.realhon.realha.cryptocurrencymini.data.model.coindetail.CoinDetail
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.Coin
@@ -25,14 +24,12 @@ import realaof.realhon.realha.cryptocurrencymini.domian.usecase.GetCoinDetailUse
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.GetCoinListUseCase
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.SearchCoinUseCase
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
-import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.LandingViewModel
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.WindowSizeState
+import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@ExtendWith(InstantTaskExecutorExtension::class)
 class LandingViewModelTest : BaseUnitTest() {
-
 
     private val getCoinDetailUseCase: GetCoinDetailUseCase = mockk()
 
@@ -42,17 +39,20 @@ class LandingViewModelTest : BaseUnitTest() {
 
     private val coinCurrencyMapper = CoinCurrencyMapperImp()
 
+    private val savedStateHandle = SavedStateHandle()
+
     private lateinit var viewModel: LandingViewModel
 
     @Before
-    override fun setup() {
+    override fun setup() = runTest {
         super.setup()
 
         viewModel = LandingViewModel(
             getCoinListUseCase = getCoinListUseCase,
             searchCoinUseCase = searchCoinUseCase,
             getCoinDetailUseCase = getCoinDetailUseCase,
-            coinCurrencyMapper = coinCurrencyMapper
+            coinCurrencyMapper = coinCurrencyMapper,
+            savedStateHandle = savedStateHandle
         )
     }
 
@@ -70,12 +70,16 @@ class LandingViewModelTest : BaseUnitTest() {
         } returns (Result.success(coinCurrency))
 
         //When
-        viewModel.getCoinList()
+        viewModel.getCoinList(isLoadMore = false)
 
         //Then
         turbineScope {
-            val response = viewModel.landingUiState.testIn(backgroundScope)
-            Assert.assertEquals(expectData, response.awaitItem())
+            val response = viewModel.landingUiState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.empty, response.empty)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
         }
     }
 
@@ -101,8 +105,12 @@ class LandingViewModelTest : BaseUnitTest() {
 
         //Then
         turbineScope {
-            val response = viewModel.landingUiState.testIn(backgroundScope)
-            Assert.assertEquals(expectData, response.awaitItem())
+            val response = viewModel.landingUiState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.empty, response.empty)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
         }
     }
 
@@ -129,8 +137,12 @@ class LandingViewModelTest : BaseUnitTest() {
 
         //Then
         turbineScope {
-            val response = viewModel.landingUiState.testIn(backgroundScope)
-            Assert.assertEquals(expectData, response.awaitItem())
+            val response = viewModel.landingUiState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.empty, response.empty)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
         }
     }
 
@@ -160,43 +172,112 @@ class LandingViewModelTest : BaseUnitTest() {
     fun loadMoreCoins_IndexMoreThanPageSize() = runTest {
         //Given
         val keyword = "Coin"
-        val index = LandingViewModel.PAGE_SIZE
+        val index = LandingViewModel.PAGE_SIZE - 1
         val coinCurrency = getCurrency()
-        val expect = LandingUiState(success = coinCurrencyMapper.mapToCoinLandingUi(coinCurrency))
 
-        coEvery { searchCoinUseCase.execute(SearchCoinUseCase.Input(keyword)) } returns Result.success(
+        //expect data
+        val expectCoinList = getCurrency().data.coins.toMutableList()
+        expectCoinList.addAll(getCurrency().data.coins)
+        val expectCoinCurrency = getCurrency().copy(
+            data = coinCurrency.data.copy(
+                coins = expectCoinList
+            )
+        )
+
+        val mockCoinListResponse = Result.success(coinCurrency)
+        val expectData =
+            LandingUiState(success = coinCurrencyMapper.mapToCoinLandingUi(expectCoinCurrency))
+
+        coEvery { searchCoinUseCase.execute(any()) } returns Result.success(
             coinCurrency
         )
 
+        coEvery { getCoinListUseCase.execute(any()) } returns mockCoinListResponse
+
+        //When
+        viewModel.getCoinList()
+        viewModel.loadMoreCoins(keyword, index)
+
+        turbineScope {
+            val response = viewModel.landingUiState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.empty, response.empty)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
+        }
+    }
+
+    @Test
+    fun loadMoreCoins_IndexLessThanPageSize() = runTest {
+        //Given
+        val keyword = "Coin"
+        val index = 0
+        val expectData = LandingUiState(loading = true)
+
         //When
         viewModel.loadMoreCoins(keyword, index)
+
+        //Then
+        turbineScope {
+            val response = viewModel.landingUiState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.empty, response.empty)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
+        }
     }
 
     @Test
     fun loadMoreCoins_IndexMoreThanPageSize_KeywordIsEmpty() = runTest {
         //Given
         val keyword = ""
-        val index = LandingViewModel.PAGE_SIZE
+        val index = LandingViewModel.PAGE_SIZE - 1
         val coinCurrency = getCurrency()
-        val expect = LandingUiState(success = coinCurrencyMapper.mapToCoinLandingUi(coinCurrency))
 
-        coEvery { searchCoinUseCase.execute(SearchCoinUseCase.Input(keyword)) } returns Result.success(
+        //expect data
+        val expectCoinList = getCurrency().data.coins.toMutableList()
+        expectCoinList.addAll(getCurrency().data.coins)
+        val expectCoinCurrency = getCurrency().copy(
+            data = coinCurrency.data.copy(
+                coins = expectCoinList
+            )
+        )
+
+        val mockCoinListResponse = Result.success(coinCurrency)
+        val expectData =
+            LandingUiState(success = coinCurrencyMapper.mapToCoinLandingUi(expectCoinCurrency))
+
+        coEvery { searchCoinUseCase.execute(any()) } returns Result.success(
             coinCurrency
         )
 
-        //When
-        viewModel.loadMoreCoins(keyword, index)
-    }
+        coEvery { getCoinListUseCase.execute(any()) } returns mockCoinListResponse
 
+        //When
+        viewModel.getCoinList()
+        viewModel.loadMoreCoins(keyword, index)
+
+        turbineScope {
+            val response = viewModel.landingUiState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.empty, response.empty)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
+        }
+    }
 
     @Test
     fun getCoinSearch_Success() = runTest {
         //Given
         val keyword = "Coins"
         val coinCurrency = getCurrency()
-        val expect = LandingUiState(success = coinCurrencyMapper.mapToCoinLandingUi(coinCurrency))
+        val expectData =
+            LandingUiState(success = coinCurrencyMapper.mapToCoinLandingUi(coinCurrency))
 
-        coEvery { searchCoinUseCase.execute(SearchCoinUseCase.Input(keyword)) } returns Result.success(
+        coEvery { searchCoinUseCase.execute(any()) } returns Result.success(
             coinCurrency
         )
 
@@ -204,8 +285,13 @@ class LandingViewModelTest : BaseUnitTest() {
         viewModel.getSearchCoins(keyword)
 
         //Then
-        viewModel.landingUiState.test {
-            Assert.assertEquals(expect, this.awaitItem())
+        turbineScope {
+            val response = viewModel.landingUiState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.empty, response.empty)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
         }
     }
 
@@ -214,9 +300,9 @@ class LandingViewModelTest : BaseUnitTest() {
         //Given
         val keyword = "Coins"
         val error = Throwable()
-        val expect = LandingUiState(error = error.toBaseCommonError())
+        val expectData = LandingUiState(error = error.toBaseCommonError())
 
-        coEvery { searchCoinUseCase.execute(SearchCoinUseCase.Input(keyword)) } returns Result.failure(
+        coEvery { searchCoinUseCase.execute(any()) } returns Result.failure(
             error
         )
 
@@ -224,8 +310,13 @@ class LandingViewModelTest : BaseUnitTest() {
         viewModel.getSearchCoins(keyword)
 
         //Then
-        viewModel.landingUiState.test {
-            Assert.assertEquals(expect, this.awaitItem())
+        turbineScope {
+            val response = viewModel.landingUiState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.empty, response.empty)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
         }
     }
 
@@ -234,9 +325,10 @@ class LandingViewModelTest : BaseUnitTest() {
         //Given
         val keyword = "Coins"
         val coinCurrency = getCurrency()
-        val expect = LandingUiState(success = coinCurrencyMapper.mapToCoinLandingUi(coinCurrency))
+        val expectData =
+            LandingUiState(success = coinCurrencyMapper.mapToCoinLandingUi(coinCurrency))
 
-        coEvery { searchCoinUseCase.execute(SearchCoinUseCase.Input(keyword)) } returns Result.success(
+        coEvery { searchCoinUseCase.execute(any()) } returns Result.success(
             coinCurrency
         )
 
@@ -244,8 +336,13 @@ class LandingViewModelTest : BaseUnitTest() {
         viewModel.searchCoins(keyword)
 
         //Then
-        viewModel.landingUiState.test {
-            Assert.assertEquals(expect, this.awaitItem())
+        turbineScope {
+            val response = viewModel.landingUiState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.empty, response.empty)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
         }
     }
 
@@ -256,7 +353,8 @@ class LandingViewModelTest : BaseUnitTest() {
         val offset = 0
         val keyword = ""
         val coinCurrency = getCurrency()
-        val expect = LandingUiState(success = coinCurrencyMapper.mapToCoinLandingUi(coinCurrency))
+        val expectData =
+            LandingUiState(success = coinCurrencyMapper.mapToCoinLandingUi(coinCurrency))
 
         coEvery {
             getCoinListUseCase.execute(
@@ -273,8 +371,13 @@ class LandingViewModelTest : BaseUnitTest() {
         viewModel.searchCoins(keyword)
 
         //Then
-        viewModel.landingUiState.test {
-            Assert.assertEquals(expect, this.awaitItem())
+        turbineScope {
+            val response = viewModel.landingUiState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.empty, response.empty)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
         }
     }
 
@@ -283,7 +386,8 @@ class LandingViewModelTest : BaseUnitTest() {
         //Given
         val uuid = "uuid"
         val coinDetail = getCoinDetail()
-        val expect = CoinDetailUiState(success = coinCurrencyMapper.mapToCoinDetailUi(coinDetail))
+        val expectData =
+            CoinDetailUiState(success = coinCurrencyMapper.mapToCoinDetailUi(coinDetail))
 
         coEvery { getCoinDetailUseCase.execute(GetCoinDetailUseCase.Input(uuid)) } returns Result.success(
             coinDetail
@@ -293,8 +397,12 @@ class LandingViewModelTest : BaseUnitTest() {
         viewModel.getCoinDetail(uuid)
 
         //Then
-        viewModel.coinDetailBottomSheetState.test {
-            Assert.assertEquals(expect, this.awaitItem())
+        turbineScope {
+            val response = viewModel.coinDetailBottomSheetState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
         }
     }
 
@@ -303,7 +411,7 @@ class LandingViewModelTest : BaseUnitTest() {
         //Given
         val uuid = "uuid"
         val error = Throwable()
-        val expect = CoinDetailUiState(error = error.toBaseCommonError())
+        val expectData = CoinDetailUiState(error = error.toBaseCommonError())
 
         coEvery { getCoinDetailUseCase.execute(GetCoinDetailUseCase.Input(uuid)) } returns Result.failure(
             error
@@ -313,8 +421,12 @@ class LandingViewModelTest : BaseUnitTest() {
         viewModel.getCoinDetail(uuid)
 
         //Then
-        viewModel.coinDetailBottomSheetState.test {
-            Assert.assertEquals(expect, this.awaitItem())
+        turbineScope {
+            val response = viewModel.coinDetailBottomSheetState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
         }
     }
 
@@ -325,7 +437,8 @@ class LandingViewModelTest : BaseUnitTest() {
         val expect = WindowSizeState(
             portrait = WindowSizeState.WindowAdaptive(
                 adaptiveColumn = 1,
-                paddingValues = PaddingValues()
+                horizontalArrangement = Arrangement.Start,
+                verticalArrangement = Arrangement.spacedBy(dimen.dimen_16)
             )
         )
 
@@ -345,7 +458,8 @@ class LandingViewModelTest : BaseUnitTest() {
         val expect = WindowSizeState(
             portrait = WindowSizeState.WindowAdaptive(
                 adaptiveColumn = 1,
-                paddingValues = PaddingValues()
+                horizontalArrangement = Arrangement.spacedBy(dimen.dimen_8),
+                verticalArrangement = Arrangement.spacedBy(dimen.dimen_16)
             )
         )
 
@@ -365,7 +479,8 @@ class LandingViewModelTest : BaseUnitTest() {
         val expect = WindowSizeState(
             landscape = WindowSizeState.WindowAdaptive(
                 adaptiveColumn = 3,
-                paddingValues = PaddingValues()
+                horizontalArrangement = Arrangement.spacedBy(dimen.dimen_8),
+                verticalArrangement = Arrangement.spacedBy(dimen.dimen_16)
             )
         )
 

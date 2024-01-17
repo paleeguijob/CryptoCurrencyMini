@@ -35,7 +35,6 @@ import coil.request.ImageRequest
 import realaof.realhon.realha.cryptocurrencymini.R
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Alabaster
-import realaof.realhon.realha.cryptocurrencymini.ui.theme.Malachite
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.MineShaft
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 
@@ -161,7 +160,7 @@ fun CoinTextWithTrend(
         Text(
             text = symbolUi.symbol,
             style = MaterialTheme.typography.titleMedium.copy(
-                color = symbolUi.color,
+                color = Color(symbolUi.color.toColorInt()),
                 fontWeight = FontWeight.W700
             ),
             modifier = Modifier
@@ -204,7 +203,7 @@ fun TextWithTrend(
         Text(
             text = changeUi.change,
             style = MaterialTheme.typography.titleMedium.copy(
-                color = changeUi.color,
+                color = Color(changeUi.color.toColorInt()),
                 fontWeight = FontWeight.W700,
             ),
             modifier = Modifier.clearAndSetSemantics {
@@ -224,12 +223,12 @@ private fun CoinItemPreview() {
             price = "1000000000.00000",
             symbol = LandingUiState.LandingUi.CoinUi.CoinSymbol(
                 symbol = "BTC",
-                color = Color("#f7931A".toColorInt())
+                color = "#f7931A"
             ),
             change = LandingUiState.LandingUi.CoinUi.ChangeUi(
                 arrowIcon = R.drawable.ic_arrow_up,
                 change = "1.8",
-                color = Malachite
+                color = "#000000"
             )
         )
     )

@@ -3,7 +3,6 @@ package realaof.realhon.realha.cryptocurrencymini.base.extensions
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -23,13 +22,13 @@ open class BaseUnitTest {
 
     @ExperimentalCoroutinesApi
     @Before
-    open fun setup(){
+    open fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
     }
 
     @ExperimentalCoroutinesApi
     @After
-    open fun tearDown(){
+    open fun tearDown() {
         Dispatchers.resetMain()
     }
 }

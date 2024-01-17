@@ -28,10 +28,13 @@ class CoinCurrencyRepositoryImp @Inject constructor(
             }
         }
 
-    override suspend fun searchCoin(keyword: String): Flow<NetworkResponse<CoinCurrency, BaseCommonError>> =
+    override suspend fun searchCoin(
+        keyword: String,
+        offset: Int
+    ): Flow<NetworkResponse<CoinCurrency, BaseCommonError>> =
         withContext(dispatcher) {
             flow {
-                emit(coinCurrencyService.searchCoin(keyword = keyword))
+                emit(coinCurrencyService.searchCoin(keyword = keyword, offset = offset))
             }.catch { error ->
                 emit(NetworkResponse.OtherError(error))
             }

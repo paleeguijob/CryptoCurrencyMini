@@ -23,6 +23,7 @@ interface CoinCurrencyService {
     suspend fun searchCoin(
         @Header("x-access-token") token: String = BASE_TOKEN,
         @Query("search") keyword: String,
+        @Query("offset") offset: Int,
         @Query("limit") limit: Int? = 20,
     ): NetworkResponse<CoinCurrency, BaseCommonError>
 

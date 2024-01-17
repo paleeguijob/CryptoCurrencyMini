@@ -26,7 +26,7 @@ import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
-    state: EditableSearchInputState = rememberEditableSearchInputState(hint = ""),
+    state: EditableSearchInputState = rememberEditableSearchInputState(hint = "", keyword = ""),
     onSearchAction: (String) -> Unit = {},
     onValueChange: (String) -> Unit = {},
     onClickedClearText: () -> Unit = {}
@@ -85,6 +85,6 @@ fun SearchBar(
 @Composable
 private fun SearchBarPreview() {
     SearchBar(
-        state = rememberEditableSearchInputState(hint = "Coin")
+        state = rememberEditableSearchInputState(hint = "Search", keyword = "Coin")
     )
 }

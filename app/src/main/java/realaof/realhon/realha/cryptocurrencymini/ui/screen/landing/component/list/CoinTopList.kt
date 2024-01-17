@@ -18,20 +18,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.toColorInt
 import realaof.realhon.realha.cryptocurrencymini.R
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.item.CoinTopItem
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.item.TextInline
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.WindowSizeState
-import realaof.realhon.realha.cryptocurrencymini.ui.theme.Malachite
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.MineShaft
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.RedOrange
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
@@ -102,11 +99,11 @@ private fun CoinTopListPreview() {
                 price = "",
                 symbol = LandingUiState.LandingUi.CoinUi.CoinSymbol(
                     symbol = "BTC",
-                    color = Color("#f7931A".toColorInt())
+                    color = "#f7931A"
                 ),
                 change = LandingUiState.LandingUi.CoinUi.ChangeUi(
                     change = "1.8",
-                    color = Malachite
+                    color = "#0000000"
                 )
             ),
             LandingUiState.LandingUi.CoinUi(
@@ -115,11 +112,11 @@ private fun CoinTopListPreview() {
                 price = "",
                 symbol = LandingUiState.LandingUi.CoinUi.CoinSymbol(
                     symbol = "BTC",
-                    color = Color("#f7931A".toColorInt())
+                    color = "#f7931A"
                 ),
                 change = LandingUiState.LandingUi.CoinUi.ChangeUi(
                     change = "1.8",
-                    color = Malachite
+                    color = "#0000000"
                 )
             ),
             LandingUiState.LandingUi.CoinUi(
@@ -128,11 +125,11 @@ private fun CoinTopListPreview() {
                 price = "",
                 symbol = LandingUiState.LandingUi.CoinUi.CoinSymbol(
                     symbol = "BTC",
-                    color = Color("#f7931A".toColorInt())
+                    color = "#f7931A"
                 ),
                 change = LandingUiState.LandingUi.CoinUi.ChangeUi(
                     change = "1.8",
-                    color = Malachite
+                    color = "#0000000"
                 )
             )
         ),
@@ -157,11 +154,11 @@ private fun CoinCurrencyListPreview() {
                     price = "",
                     symbol = LandingUiState.LandingUi.CoinUi.CoinSymbol(
                         symbol = "BTC",
-                        color = Color("#f7931A".toColorInt())
+                        color = "#f7931A"
                     ),
                     change = LandingUiState.LandingUi.CoinUi.ChangeUi(
                         change = "1.8",
-                        color = Malachite
+                        color = "#0000000"
                     )
                 ),
                 LandingUiState.LandingUi.CoinUi(
@@ -170,11 +167,11 @@ private fun CoinCurrencyListPreview() {
                     price = "",
                     symbol = LandingUiState.LandingUi.CoinUi.CoinSymbol(
                         symbol = "BTC",
-                        color = Color("#f7931A".toColorInt())
+                        color = "#f7931A"
                     ),
                     change = LandingUiState.LandingUi.CoinUi.ChangeUi(
                         change = "1.8",
-                        color = Malachite
+                        color = "#0000000"
                     )
                 ),
                 LandingUiState.LandingUi.CoinUi(
@@ -183,11 +180,11 @@ private fun CoinCurrencyListPreview() {
                     price = "",
                     symbol = LandingUiState.LandingUi.CoinUi.CoinSymbol(
                         symbol = "BTC",
-                        color = Color("#f7931A".toColorInt())
+                        color = "#f7931A"
                     ),
                     change = LandingUiState.LandingUi.CoinUi.ChangeUi(
                         change = "1.8",
-                        color = Malachite
+                        color = "#0000000"
                     )
                 )
             ).toMutableList(),

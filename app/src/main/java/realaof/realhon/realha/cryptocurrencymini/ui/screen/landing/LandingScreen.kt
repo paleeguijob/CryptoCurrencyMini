@@ -45,6 +45,7 @@ import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.CoinDetailBott
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.list.CoinCurrencyList
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.WindowSizeState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.rememberLandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Orange
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.SearchBg
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
@@ -62,9 +63,16 @@ fun LandingScreen(
         viewModel.setAdaptiveWindowSizeSate(windowSizeClass)
     }
 
+    //Call Api first time prevent state change ex. rotate portrait to landscape
+    rememberSaveable(saver = LandingUiState.Saver) {
+        viewModel.getCoinList()
+        LandingUiState(loading = true)
+    }
+
     val scope = rememberCoroutineScope()
 
     val landingUi by viewModel.landingUiState.collectAsStateWithLifecycle()
+    val query by viewModel.keyword.collectAsStateWithLifecycle()
     val coinDetailUi by viewModel.coinDetailBottomSheetState.collectAsStateWithLifecycle()
     val adaptiveWindowSizeState by viewModel.windowAdaptiveState.collectAsStateWithLifecycle()
 
@@ -72,6 +80,7 @@ fun LandingScreen(
 
     val searchInputState = rememberEditableSearchInputState(
         hint = stringResource(id = R.string.coin_currency_common_search),
+        keyword = query
     )
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -101,14 +110,19 @@ fun LandingScreen(
             SearchBar(
                 state = searchInputState,
                 onValueChange = { newText ->
-                    viewModel.searchCoins(newText, isSearching = true)
+                    scope.launch {
+                        viewModel.searchCoins(newText, isSearching = true)
+                    }
                 },
                 onSearchAction = { newText ->
-                    viewModel.searchCoins(newText, isSearching = true)
-                    keyboardController?.hide()
+                    scope.launch {
+                        viewModel.searchCoins(newText, isSearching = true)
+                        keyboardController?.hide()
+                    }
                 },
                 onClickedClearText = {
                     keyboardController?.hide()
+                    viewModel.onSearchValueChange("")
                     viewModel.initCoinList()
                 },
                 modifier = Modifier
@@ -129,7 +143,7 @@ fun LandingScreen(
                     }
                 },
                 onLoadMore = { index ->
-                    viewModel.loadMoreCoins(index = index)
+                    viewModel.loadMoreCoins(keyword = searchInputState.text, index = index)
                 }
             )
         }
@@ -166,30 +180,30 @@ fun WrapLandingContent(
     onLoadMore: (Int) -> Unit
 ) {
     val context = LocalContext.current
+    val stateUi = rememberLandingUiState(landingUiState = landingState)
 
-    //State Ui
     when {
-        landingState.loading.orFalse() -> BaseLoading(modifier = Modifier.fillMaxSize())
+        stateUi.loading.orFalse() -> BaseLoading(modifier = Modifier.fillMaxSize())
 
-        landingState.empty.orFalse() -> {
+        stateUi.empty.orFalse() -> {
             BaseErrorScreen(
                 title = stringResource(id = R.string.coin_currency_common_search_error_title),
                 message = stringResource(id = R.string.coin_currency_common_search_error_message)
             )
         }
 
-        landingState.error != null -> {
+        stateUi.error != null -> {
             BaseErrorScreen(
                 icon = Icons.Filled.ErrorOutline,
                 title = stringResource(id = R.string.coin_currency_common_search_error_title),
-                message = landingState.error.message.orEmpty()
+                message = stateUi.error.message.orEmpty()
             )
         }
 
-        landingState.success != null -> {
+        stateUi.success != null -> {
             LandingContent(
                 adaptiveWindowSizeState = adaptiveWindowSizeState,
-                landingUi = landingState.success,
+                landingUi = stateUi.success,
                 pullToRefreshState = pullToRefreshState,
                 onClickedItem = onClickedItem,
                 onClickedItemToShared = { earnCoinShareText ->

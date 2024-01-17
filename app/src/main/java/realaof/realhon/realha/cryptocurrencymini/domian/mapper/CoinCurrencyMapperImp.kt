@@ -8,8 +8,6 @@ import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.Coin
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.CoinCurrency
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
-import realaof.realhon.realha.cryptocurrencymini.ui.theme.Malachite
-import realaof.realhon.realha.cryptocurrencymini.ui.theme.RedOrange
 import realaof.realhon.realha.cryptocurrencymini.util.NUMBER_WITH_2DECIMAL
 import realaof.realhon.realha.cryptocurrencymini.util.NUMBER_WITH_COMMA_AND_DOLLAR_2DECIMAL
 import realaof.realhon.realha.cryptocurrencymini.util.NUMBER_WITH_COMMA_AND_DOLLAR_SIGN_5DECIMAL
@@ -47,6 +45,7 @@ class CoinCurrencyMapperImp @Inject constructor() : CoinCurrencyMapper {
     private fun mapToCoinList(coins: List<Coin>) = coins
         .map { coin -> setCoin(coin) }.toMutableList()
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun setCoin(coin: Coin): LandingUiState.LandingUi.CoinUi =
         LandingUiState.LandingUi.CoinUi(
             uuid = coin.uuid.orEmpty(),
@@ -55,12 +54,7 @@ class CoinCurrencyMapperImp @Inject constructor() : CoinCurrencyMapper {
             price = coin.price.toMoneyFormat(NUMBER_WITH_COMMA_AND_DOLLAR_SIGN_5DECIMAL),
             symbol = LandingUiState.LandingUi.CoinUi.CoinSymbol(
                 symbol = coin.symbol.orEmpty(),
-                color = try {
-                    Color(coin.color?.toColorInt() ?: "#000000".toColorInt())
-                } catch (e: Throwable) {
-                    //when cannot convert hex to Color ex. #000
-                    Color("#000000".toColorInt())
-                }
+                color = if (coin.color?.length.orZero() >= 7) coin.color ?: "#000000" else "#000000"
             ),
             change = LandingUiState.LandingUi.CoinUi.ChangeUi(
                 arrowIcon = if (coin.change.orZero().toFloat()
@@ -70,7 +64,9 @@ class CoinCurrencyMapperImp @Inject constructor() : CoinCurrencyMapper {
                 change = abs(coin.change.orZero().toFloat().orZero()).toMoneyFormat(
                     NUMBER_WITH_2DECIMAL
                 ),
-                color = if (coin.change.orZero().toFloat().orZero() < 0.0) RedOrange else Malachite
+                color = if (coin.change.orZero().toFloat()
+                        .orZero() < 0.0
+                ) "#FFF82D2D" else "#FF13BC24"
             )
         )
 
@@ -78,6 +74,7 @@ class CoinCurrencyMapperImp @Inject constructor() : CoinCurrencyMapper {
         coin: realaof.realhon.realha.cryptocurrencymini.data.model.coindetail.Coin
     ): CoinDetailUiState.CoinDetailUi.HeaderUi =
         CoinDetailUiState.CoinDetailUi.HeaderUi(
+            name = coin.name.orEmpty(),
             coinUrl = coin.iconUrl.orEmpty(),
             symbol = CoinDetailUiState.CoinDetailUi.HeaderUi.CoinSymbol(
                 symbol = coin.symbol.orEmpty(),

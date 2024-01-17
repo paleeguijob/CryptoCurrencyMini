@@ -1,6 +1,5 @@
 package realaof.realhon.realha.cryptocurrencymini.base.compose.search
 
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,11 +11,12 @@ import androidx.compose.runtime.setValue
 @Composable
 fun rememberEditableSearchInputState(
     hint: String,
+    keyword: String,
     onValueChange: (String) -> Unit = {}
-) = rememberSaveable(hint, saver = EditableSearchInputState.Saver) {
+) = rememberSaveable(keyword, saver = EditableSearchInputState.Saver) {
     EditableSearchInputState(
         hint = hint,
-        keyword = "",
+        keyword = keyword,
         onValueChange = onValueChange
     )
 }
