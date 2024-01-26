@@ -1,4 +1,4 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.component.item
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.item
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -24,10 +24,9 @@ import androidx.core.graphics.toColorInt
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel.LandingUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Alabaster
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.DustyGray
-import realaof.realhon.realha.cryptocurrencymini.ui.theme.Malachite
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 
 @Composable
@@ -75,7 +74,7 @@ fun CoinTopItem(
             Text(
                 text = coinUi.symbol.symbol,
                 style = MaterialTheme.typography.titleLarge.copy(
-                    color = coinUi.symbol.color
+                    color = Color(coinUi.symbol.color.toColorInt())
                 ),
                 modifier = Modifier
                     .padding(vertical = dimen.dimen_8)
@@ -109,11 +108,11 @@ private fun CoinTopItemPreview() {
             price = "",
             symbol = LandingUiState.LandingUi.CoinUi.CoinSymbol(
                 symbol = "BTC",
-                color = Color("#f7931A".toColorInt())
+                color = "#f7931A"
             ),
             change = LandingUiState.LandingUi.CoinUi.ChangeUi(
                 change = "1.8",
-                color = Malachite
+                color = "#000000"
             )
         )
     )

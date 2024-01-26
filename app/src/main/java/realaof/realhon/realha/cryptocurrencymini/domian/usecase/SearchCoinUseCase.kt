@@ -12,7 +12,7 @@ class SearchCoinUseCase @Inject constructor(
 ) : BaseSuspendUseCase<SearchCoinUseCase.Input, CoinCurrency>() {
 
     override suspend fun create(input: Input): CoinCurrency =
-        repository.searchCoin(input.keyword).last().toDataOrThrow()
+        repository.searchCoin(input.keyword, input.offset).last().toDataOrThrow()
 
-    data class Input(val keyword: String)
+    data class Input(val keyword: String, val offset: Int)
 }

@@ -34,13 +34,14 @@ class SearchCoinUseCaseTest : BaseUnitTest() {
     fun searchCoinsUseCase() = runTest {
         //Given
         val keyword = "coin"
+        val offset = 0
         val coinCurrency = getCurrency()
         val mockResponse = flowOf(NetworkResponse.Success(coinCurrency))
 
-        coEvery { repository.searchCoin(keyword = keyword) } returns mockResponse
+        coEvery { repository.searchCoin(keyword = keyword, offset = offset) } returns mockResponse
 
         //When
-        val response = searchCoinUseCase.execute(SearchCoinUseCase.Input(keyword))
+        val response = searchCoinUseCase.execute(SearchCoinUseCase.Input(keyword, offset))
 
         //Then
         Assert.assertEquals(coinCurrency, response.getOrNull())

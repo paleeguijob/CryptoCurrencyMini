@@ -12,7 +12,10 @@ interface CoinCurrencyRepository {
         limit: Int, offset: Int
     ): Flow<NetworkResponse<CoinCurrency, BaseCommonError>>
 
-    suspend fun searchCoin(keyword: String): Flow<NetworkResponse<CoinCurrency, BaseCommonError>>
+    suspend fun searchCoin(
+        keyword: String,
+        offset: Int
+    ): Flow<NetworkResponse<CoinCurrency, BaseCommonError>>
 
     suspend fun getCoinDetail(uuid: String): Flow<NetworkResponse<CoinDetail, BaseCommonError>>
 }

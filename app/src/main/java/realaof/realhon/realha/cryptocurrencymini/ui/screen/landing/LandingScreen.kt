@@ -1,4 +1,4 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.landing
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.landing
 
 import android.content.Context
 import android.content.Intent
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
@@ -33,22 +32,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import realaof.realhon.realha.cryptocurrencymini.R
 import realaof.realhon.realha.cryptocurrencymini.base.compose.error.BaseErrorScreen
 import realaof.realhon.realha.cryptocurrencymini.base.compose.loading.BaseLoading
 import realaof.realhon.realha.cryptocurrencymini.base.compose.search.SearchBar
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.component.list.CoinCurrencyList
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel.LandingUiState
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.delay
 import realaof.realhon.realha.cryptocurrencymini.base.compose.search.rememberEditableSearchInputState
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.detail.CoinDetailBottomSheet
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel.WindowSizeState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.CoinDetailBottomSheet
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.list.CoinCurrencyList
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.WindowSizeState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.rememberLandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Orange
-import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.SearchBg
+import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 import realaof.realhon.realha.cryptocurrencymini.util.orFalse
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
@@ -56,16 +56,23 @@ import realaof.realhon.realha.cryptocurrencymini.util.orFalse
 fun LandingScreen(
     modifier: Modifier = Modifier,
     windowSizeClass: WindowWidthSizeClass,
-    viewModel: LandingViewModel = viewModel(),
+    viewModel: LandingViewModel = hiltViewModel(),
 ) {
     //set Adaptive Window Size
     LaunchedEffect(key1 = windowSizeClass) {
         viewModel.setAdaptiveWindowSizeSate(windowSizeClass)
     }
 
+    //Call Api first time prevent state change ex. rotate portrait to landscape
+    rememberSaveable(saver = LandingUiState.Saver) {
+        viewModel.getCoinList()
+        LandingUiState(loading = true)
+    }
+
     val scope = rememberCoroutineScope()
 
     val landingUi by viewModel.landingUiState.collectAsStateWithLifecycle()
+    val query by viewModel.keyword.collectAsStateWithLifecycle()
     val coinDetailUi by viewModel.coinDetailBottomSheetState.collectAsStateWithLifecycle()
     val adaptiveWindowSizeState by viewModel.windowAdaptiveState.collectAsStateWithLifecycle()
 
@@ -73,6 +80,7 @@ fun LandingScreen(
 
     val searchInputState = rememberEditableSearchInputState(
         hint = stringResource(id = R.string.coin_currency_common_search),
+        keyword = query
     )
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -100,21 +108,26 @@ fun LandingScreen(
         //Order Component
         Column {
             SearchBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(dimen.dimen_16),
                 state = searchInputState,
                 onValueChange = { newText ->
-                    viewModel.searchCoins(newText, isSearching = true)
+                    scope.launch {
+                        viewModel.searchCoins(newText, isSearching = true)
+                    }
                 },
                 onSearchAction = { newText ->
-                    viewModel.searchCoins(newText, isSearching = true)
-                    keyboardController?.hide()
+                    scope.launch {
+                        viewModel.searchCoins(newText, isSearching = true)
+                        keyboardController?.hide()
+                    }
                 },
                 onClickedClearText = {
                     keyboardController?.hide()
+                    viewModel.onSearchValueChange("")
                     viewModel.initCoinList()
-                }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(dimen.dimen_16)
             )
 
             Divider(color = SearchBg)
@@ -130,7 +143,7 @@ fun LandingScreen(
                     }
                 },
                 onLoadMore = { index ->
-                    viewModel.loadMoreCoins(index = index)
+                    viewModel.loadMoreCoins(keyword = searchInputState.text, index = index)
                 }
             )
         }
@@ -167,30 +180,30 @@ fun WrapLandingContent(
     onLoadMore: (Int) -> Unit
 ) {
     val context = LocalContext.current
+    val stateUi = rememberLandingUiState(landingUiState = landingState)
 
-    //State Ui
     when {
-        landingState.loading.orFalse() -> BaseLoading(modifier = Modifier.fillMaxSize())
+        stateUi.loading.orFalse() -> BaseLoading(modifier = Modifier.fillMaxSize())
 
-        landingState.empty.orFalse() -> {
+        stateUi.empty.orFalse() -> {
             BaseErrorScreen(
                 title = stringResource(id = R.string.coin_currency_common_search_error_title),
                 message = stringResource(id = R.string.coin_currency_common_search_error_message)
             )
         }
 
-        landingState.error != null -> {
+        stateUi.error != null -> {
             BaseErrorScreen(
                 icon = Icons.Filled.ErrorOutline,
                 title = stringResource(id = R.string.coin_currency_common_search_error_title),
-                message = landingState.error.message.orEmpty()
+                message = stateUi.error.message.orEmpty()
             )
         }
 
-        landingState.success != null -> {
+        stateUi.success != null -> {
             LandingContent(
                 adaptiveWindowSizeState = adaptiveWindowSizeState,
-                landingUi = landingState.success,
+                landingUi = stateUi.success,
                 pullToRefreshState = pullToRefreshState,
                 onClickedItem = onClickedItem,
                 onClickedItemToShared = { earnCoinShareText ->
@@ -214,13 +227,13 @@ fun LandingContent(
     onLoadMore: (Int) -> Unit,
 ) {
     CoinCurrencyList(
-        adaptiveWindowSizeState = adaptiveWindowSizeState,
+        windowSizeState = adaptiveWindowSizeState,
         landingUi = landingUi,
         pullToRefreshState = pullToRefreshState,
-        modifier = modifier,
         onClickedItem = onClickedItem,
         onClickedItemToShared = onClickedItemToShared,
-        onLoadMore = onLoadMore
+        onLoadMore = onLoadMore,
+        modifier = modifier
     )
 }
 

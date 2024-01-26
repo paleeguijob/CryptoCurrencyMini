@@ -1,4 +1,4 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.detail.uimodel
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel
 
 import androidx.compose.ui.graphics.Color
 import realaof.realhon.realha.cryptocurrencymini.base.model.BaseCommonError

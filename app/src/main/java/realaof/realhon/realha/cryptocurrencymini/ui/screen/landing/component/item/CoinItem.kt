@@ -1,4 +1,4 @@
-package realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.component.item
+package realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.item
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -33,9 +33,8 @@ import coil.compose.rememberAsyncImagePainter
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import realaof.realhon.realha.cryptocurrencymini.R
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel.LandingUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Alabaster
-import realaof.realhon.realha.cryptocurrencymini.ui.theme.Malachite
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.MineShaft
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 
@@ -59,15 +58,15 @@ fun CoinItem(
             }
     ) {
         Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(
                     vertical = dimen.dimen_20,
                     horizontal = dimen.dimen_16
-                ),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+                )
         ) {
             val painter = rememberAsyncImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -109,11 +108,11 @@ private fun CoinTextWithPrice(
     price: String
 ) {
     Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+            .wrapContentHeight()
     ) {
         Text(
             text = name,
@@ -152,16 +151,16 @@ fun CoinTextWithTrend(
     changeUi: LandingUiState.LandingUi.CoinUi.ChangeUi
 ) {
     Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+            .wrapContentHeight()
     ) {
         Text(
             text = symbolUi.symbol,
             style = MaterialTheme.typography.titleMedium.copy(
-                color = symbolUi.color,
+                color = Color(symbolUi.color.toColorInt()),
                 fontWeight = FontWeight.W700
             ),
             modifier = Modifier
@@ -186,9 +185,9 @@ fun TextWithTrend(
     changeUi: LandingUiState.LandingUi.CoinUi.ChangeUi
 ) {
     Row(
-        modifier = modifier,
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
     ) {
 
         if (changeUi.arrowIcon != null) {
@@ -204,7 +203,7 @@ fun TextWithTrend(
         Text(
             text = changeUi.change,
             style = MaterialTheme.typography.titleMedium.copy(
-                color = changeUi.color,
+                color = Color(changeUi.color.toColorInt()),
                 fontWeight = FontWeight.W700,
             ),
             modifier = Modifier.clearAndSetSemantics {
@@ -224,12 +223,12 @@ private fun CoinItemPreview() {
             price = "1000000000.00000",
             symbol = LandingUiState.LandingUi.CoinUi.CoinSymbol(
                 symbol = "BTC",
-                color = Color("#f7931A".toColorInt())
+                color = "#f7931A"
             ),
             change = LandingUiState.LandingUi.CoinUi.ChangeUi(
                 arrowIcon = R.drawable.ic_arrow_up,
                 change = "1.8",
-                color = Malachite
+                color = "#000000"
             )
         )
     )

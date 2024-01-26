@@ -1,10 +1,10 @@
 package realaof.realhon.realha.cryptocurrencymini.domian.mapper
 
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.detail.uimodel.CoinDetailUiState
-import realaof.realhon.realha.cryptocurrencymini.compose.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.data.model.coindetail.CoinDetail
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.Coin
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.CoinCurrency
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 
 interface CoinCurrencyMapper {
 

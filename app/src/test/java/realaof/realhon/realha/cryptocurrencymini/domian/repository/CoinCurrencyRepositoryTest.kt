@@ -70,15 +70,22 @@ class CoinCurrencyRepositoryTest : BaseUnitTest() {
     fun getCoinSearch_Success() = runTest {
         //Given
         val keyword = "coin currency"
+        val offset = 0
         val coinCurrency = getCurrency()
         val mockResponse = NetworkResponse.Success(coinCurrency)
 
         //When
-        coEvery { coinCurrencyService.searchCoin(keyword = keyword) } returns mockResponse
+        coEvery {
+            coinCurrencyService.searchCoin(
+                keyword = keyword,
+                offset = offset
+            )
+        } returns mockResponse
 
         //Then
         turbineScope {
-            val response = repository.searchCoin(keyword = keyword).testIn(backgroundScope)
+            val response =
+                repository.searchCoin(keyword = keyword, offset = offset).testIn(backgroundScope)
             assertEquals(mockResponse, response.awaitItem())
         }
     }
@@ -87,6 +94,7 @@ class CoinCurrencyRepositoryTest : BaseUnitTest() {
     fun getCoinSearch_ExceptionEmitFlow() = runTest {
         //Given
         val keyword = "coin currency"
+        val offset = 0
         val mockResponse = IOException()
 
         //When
@@ -94,7 +102,7 @@ class CoinCurrencyRepositoryTest : BaseUnitTest() {
 
         //Then
         turbineScope {
-            repository.searchCoin(keyword).testIn(backgroundScope)
+            repository.searchCoin(keyword, offset).testIn(backgroundScope)
         }
     }
 
