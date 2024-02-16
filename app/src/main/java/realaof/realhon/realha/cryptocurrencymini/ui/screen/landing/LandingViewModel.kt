@@ -20,6 +20,7 @@ import realaof.realhon.realha.cryptocurrencymini.domian.usecase.SearchCoinUseCas
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.WindowSizeState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.remember.CoinListLoadMoreState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 import javax.inject.Inject
 
@@ -53,10 +54,16 @@ class LandingViewModel @Inject constructor(
         MutableStateFlow(WindowSizeState(portrait = WindowSizeState.default))
     val windowAdaptiveState: StateFlow<WindowSizeState> get() = _windowAdaptiveState.asStateFlow()
 
+    private val _coinListLoadMoreState = MutableStateFlow(CoinListLoadMoreState(loadingMore = true))
+    val coinListLoadMoreState: StateFlow<CoinListLoadMoreState> get() = _coinListLoadMoreState.asStateFlow()
+
     fun getCoinList(
         limit: Int = PAGE_SIZE,
         isLoadMore: Boolean = false
     ) = viewModelScope.launch {
+
+        _coinListLoadMoreState.set(CoinListLoadMoreState(loadingMore = isLoadMore))
+
         getCoinListUseCase.execute(
             GetCoinListUseCase.Input(limit = limit, offset = _offset.value)
         )
@@ -68,6 +75,8 @@ class LandingViewModel @Inject constructor(
                 )
             }
             .onFailure { error ->
+                _coinListLoadMoreState.set(CoinListLoadMoreState(loadingMore = false))
+
                 _landingUiState.set(LandingUiState(error = error.toBaseCommonError()))
             }
     }
@@ -91,6 +100,9 @@ class LandingViewModel @Inject constructor(
         isLoadMore: Boolean = false,
         isSearching: Boolean? = false
     ) = viewModelScope.launch {
+
+        _coinListLoadMoreState.set(CoinListLoadMoreState(loadingMore = isLoadMore))
+
         searchCoinUseCase.execute(
             SearchCoinUseCase.Input(
                 keyword = keyword,
@@ -180,6 +192,9 @@ class LandingViewModel @Inject constructor(
     ) {
         when {
             isLoadMore.not() -> {
+
+                _coinListLoadMoreState.set(CoinListLoadMoreState(loadingMore = isLoadMore.not()))
+
                 if (response.data.coins.isEmpty()) {
                     _landingUiState.set(LandingUiState(empty = true))
                 } else {
@@ -192,7 +207,12 @@ class LandingViewModel @Inject constructor(
                 }
             }
 
-            else -> appendCoinList(response)
+            else -> {
+
+                _coinListLoadMoreState.set(CoinListLoadMoreState(loadingMore = true))
+
+                appendCoinList(response)
+            }
         }
     }
 
@@ -223,6 +243,10 @@ class LandingViewModel @Inject constructor(
     private fun MutableStateFlow<LandingUiState>.set(landingUi: LandingUiState) {
         this.value = landingUi
         landingUiState.value.updateLandingUi(this.value)
+    }
+
+    private fun MutableStateFlow<CoinListLoadMoreState>.set(coinLoadMore: CoinListLoadMoreState) {
+        this.value = coinLoadMore
     }
 
     fun onSearchValueChange(keyword: String) {

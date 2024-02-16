@@ -45,7 +45,8 @@ import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.CoinDetailBott
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.list.CoinCurrencyList
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.WindowSizeState
-import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.rememberLandingUiState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.remember.CoinListLoadMoreState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.remember.rememberLandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Orange
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.SearchBg
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
@@ -71,6 +72,7 @@ fun LandingScreen(
 
     val scope = rememberCoroutineScope()
 
+    //init value
     val landingUi by viewModel.landingUiState.collectAsStateWithLifecycle()
     val query by viewModel.keyword.collectAsStateWithLifecycle()
     val coinDetailUi by viewModel.coinDetailBottomSheetState.collectAsStateWithLifecycle()
@@ -78,11 +80,15 @@ fun LandingScreen(
 
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
 
+    //Search state
     val searchInputState = rememberEditableSearchInputState(
         hint = stringResource(id = R.string.coin_currency_common_search),
         keyword = query
     )
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    //Loading more state
+    val coinLoading by viewModel.coinListLoadMoreState.collectAsStateWithLifecycle()
 
     var refreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullRefreshState(
@@ -136,6 +142,7 @@ fun LandingScreen(
                 adaptiveWindowSizeState = adaptiveWindowSizeState,
                 landingState = landingUi,
                 pullToRefreshState = pullToRefreshState,
+                coinListLoadMoreState = coinLoading,
                 onClickedItem = { coin ->
                     scope.launch {
                         showBottomSheet = true
@@ -143,7 +150,10 @@ fun LandingScreen(
                     }
                 },
                 onLoadMore = { index ->
-                    viewModel.loadMoreCoins(keyword = searchInputState.text, index = index)
+                    scope.launch {
+                        delay(500)
+                        viewModel.loadMoreCoins(keyword = searchInputState.text, index = index)
+                    }
                 }
             )
         }
@@ -175,6 +185,7 @@ fun LandingScreen(
 fun WrapLandingContent(
     adaptiveWindowSizeState: WindowSizeState,
     landingState: LandingUiState,
+    coinListLoadMoreState: CoinListLoadMoreState,
     pullToRefreshState: PullRefreshState,
     onClickedItem: (coin: LandingUiState.LandingUi.CoinUi) -> Unit,
     onLoadMore: (Int) -> Unit
@@ -205,6 +216,7 @@ fun WrapLandingContent(
                 adaptiveWindowSizeState = adaptiveWindowSizeState,
                 landingUi = stateUi.success,
                 pullToRefreshState = pullToRefreshState,
+                coinListLoadMoreState = coinListLoadMoreState,
                 onClickedItem = onClickedItem,
                 onClickedItemToShared = { earnCoinShareText ->
                     shareContent(context = context, paintText = earnCoinShareText)
@@ -222,6 +234,7 @@ fun LandingContent(
     adaptiveWindowSizeState: WindowSizeState,
     landingUi: LandingUiState.LandingUi,
     pullToRefreshState: PullRefreshState,
+    coinListLoadMoreState: CoinListLoadMoreState,
     onClickedItem: (LandingUiState.LandingUi.CoinUi) -> Unit,
     onClickedItemToShared: (String) -> Unit,
     onLoadMore: (Int) -> Unit,
@@ -230,6 +243,7 @@ fun LandingContent(
         windowSizeState = adaptiveWindowSizeState,
         landingUi = landingUi,
         pullToRefreshState = pullToRefreshState,
+        coinListLoadMoreState = coinListLoadMoreState,
         onClickedItem = onClickedItem,
         onClickedItemToShared = onClickedItemToShared,
         onLoadMore = onLoadMore,

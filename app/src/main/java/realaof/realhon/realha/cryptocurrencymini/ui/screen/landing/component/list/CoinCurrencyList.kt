@@ -1,6 +1,7 @@
 package realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.list
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -18,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -36,6 +39,9 @@ import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.ite
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.item.CoinItem
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.WindowSizeState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.remember.CoinListLoadMoreState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.remember.rememberCoinLisLoadMoreState
+import realaof.realhon.realha.cryptocurrencymini.ui.theme.Orange
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
@@ -45,12 +51,15 @@ fun CoinCurrencyList(
     windowSizeState: WindowSizeState,
     landingUi: LandingUiState.LandingUi,
     pullToRefreshState: PullRefreshState,
+    coinListLoadMoreState: CoinListLoadMoreState,
     onClickedItem: (LandingUiState.LandingUi.CoinUi) -> Unit,
     onClickedItemToShared: (text: String) -> Unit,
     onLoadMore: (Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val listState = rememberLazyListState()
+    val listState = rememberLazyListState(
+        initialFirstVisibleItemIndex = landingUi.coins.size - 1
+    )
 
     val keyboard = LocalSoftwareKeyboardController.current
 
@@ -65,6 +74,7 @@ fun CoinCurrencyList(
                     horizontal = dimen.dimen_16
                 ),
                 pullToRefreshState = pullToRefreshState,
+                coinListLoadMoreState = coinListLoadMoreState,
                 onClickedItem = onClickedItem,
                 onClickedItemToShared = onClickedItemToShared,
                 onLoadMore = onLoadMore,
@@ -82,6 +92,7 @@ fun CoinCurrencyList(
                     horizontal = dimen.dimen_16
                 ),
                 pullToRefreshState = pullToRefreshState,
+                coinListLoadMoreState = coinListLoadMoreState,
                 onClickedItem = onClickedItem,
                 onClickedItemToShared = onClickedItemToShared,
                 onLoadMore = onLoadMore,
@@ -109,6 +120,7 @@ fun CoinListContent(
     landingUi: LandingUiState.LandingUi,
     windowSizeState: WindowSizeState,
     listState: LazyListState,
+    coinListLoadMoreState: CoinListLoadMoreState,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     pullToRefreshState: PullRefreshState,
     onClickedItem: (LandingUiState.LandingUi.CoinUi) -> Unit,
@@ -122,6 +134,8 @@ fun CoinListContent(
         windowSizeState.portrait != null -> false
         else -> false
     }
+
+    val scope = rememberCoroutineScope()
 
     LazyColumn(
         state = listState,
@@ -143,8 +157,9 @@ fun CoinListContent(
             }
         }
 
+        //Coin List
         item {
-            //title
+            // Title
             Text(
                 text = stringResource(id = R.string.coin_currency_coin_list_title),
                 style = MaterialTheme.typography.titleMedium,
@@ -158,10 +173,7 @@ fun CoinListContent(
                             context.getString(R.string.coin_currency_coin_list_title)
                     }
             )
-        }
 
-        //Coin List
-        item {
             CoinVerticalGridList(
                 columns = SimpleGridCells.Fixed(windowSize?.adaptiveColumn ?: 1),
                 landingUi = landingUi,
@@ -172,9 +184,24 @@ fun CoinListContent(
                 modifier = Modifier
             )
         }
+
+        scope.launch {
+            if (coinListLoadMoreState.isLoadMore) {
+
+                item {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = dimen.dimen_16)
+                    ) {
+                        CircularProgressIndicator(color = Orange)
+                    }
+                }
+            }
+        }
     }
 
-    val scope = rememberCoroutineScope()
     //send event load more
     LaunchedEffect(key1 = listState, key2 = landingUi) {
         snapshotFlow { listState.canScrollForward }
@@ -269,9 +296,26 @@ private fun CoinCurrencyListPreview() {
                     )
                 )
             ).toMutableList(),
-            coins = mutableListOf()
+            coins = mutableListOf(
+                LandingUiState.LandingUi.CoinUi(
+                    uuid = "",
+                    iconUrl = "",
+                    name = "",
+                    price = "",
+                    symbol = LandingUiState.LandingUi.CoinUi.CoinSymbol(
+                        "BTC",
+                        "#000000"
+                    ),
+                    change = LandingUiState.LandingUi.CoinUi.ChangeUi(
+                        arrowIcon = R.drawable.ic_arrow_up,
+                        change = "0.1",
+                        color = "#000000"
+                    )
+                )
+            )
         ),
         pullToRefreshState = rememberPullRefreshState(refreshing = true, onRefresh = { /*TODO*/ }),
+        coinListLoadMoreState = rememberCoinLisLoadMoreState(loadingMore = false) {},
         onClickedItemToShared = {},
         onClickedItem = {},
         onLoadMore = {},
