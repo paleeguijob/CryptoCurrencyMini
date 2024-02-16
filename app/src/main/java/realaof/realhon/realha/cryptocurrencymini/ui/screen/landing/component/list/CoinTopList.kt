@@ -29,6 +29,7 @@ import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.ite
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.component.item.TextInline
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.WindowSizeState
+import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.remember.rememberCoinLisLoadMoreState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.MineShaft
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.RedOrange
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
@@ -191,6 +192,7 @@ private fun CoinCurrencyListPreview() {
             coins = mutableListOf()
         ),
         pullToRefreshState = rememberPullRefreshState(refreshing = true, onRefresh = { /*TODO*/ }),
+        coinListLoadMoreState = rememberCoinLisLoadMoreState(loadingMore = false) {},
         onClickedItemToShared = {},
         onClickedItem = {},
         onLoadMore = {},

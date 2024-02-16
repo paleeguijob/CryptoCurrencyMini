@@ -13,7 +13,7 @@ import realaof.realhon.realha.cryptocurrencymini.util.orFalse
 import kotlin.math.pow
 
 @Parcelize
-class LandingUiState(
+data class LandingUiState(
     val loading: Boolean? = false,
     val empty: Boolean? = false,
     val success: LandingUi? = null,
