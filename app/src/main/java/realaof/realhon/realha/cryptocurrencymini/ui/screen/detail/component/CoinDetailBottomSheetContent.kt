@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,7 +47,7 @@ fun CoinDetailBottomSheetContent(
             ),
             modifier = Modifier.fillMaxWidth()
         )
-        Divider(color = SearchBg)
+        HorizontalDivider(color = SearchBg)
         Text(
             text = stringResource(id = R.string.coin_currency_detail_coin_detail_button_text_go_to_web_site),
             textAlign = TextAlign.Center,

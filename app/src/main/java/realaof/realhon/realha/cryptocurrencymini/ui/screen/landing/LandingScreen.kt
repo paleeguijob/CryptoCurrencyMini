@@ -14,7 +14,7 @@ import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -136,7 +136,7 @@ fun LandingScreen(
                     .padding(dimen.dimen_16)
             )
 
-            Divider(color = SearchBg)
+            HorizontalDivider(color = SearchBg)
 
             WrapLandingContent(
                 adaptiveWindowSizeState = adaptiveWindowSizeState,
