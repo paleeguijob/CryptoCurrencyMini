@@ -13,8 +13,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,7 +28,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -52,7 +54,7 @@ import realaof.realhon.realha.cryptocurrencymini.ui.theme.SearchBg
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 import realaof.realhon.realha.cryptocurrencymini.util.orFalse
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LandingScreen(
     modifier: Modifier = Modifier,
@@ -75,10 +77,7 @@ fun LandingScreen(
     //init value
     val landingUi by viewModel.landingUiState.collectAsStateWithLifecycle()
     val query by viewModel.keyword.collectAsStateWithLifecycle()
-    val coinDetailUi by viewModel.coinDetailBottomSheetState.collectAsStateWithLifecycle()
     val adaptiveWindowSizeState by viewModel.windowAdaptiveState.collectAsStateWithLifecycle()
-
-    var showBottomSheet by rememberSaveable { mutableStateOf(false) }
 
     //Search state
     val searchInputState = rememberEditableSearchInputState(
@@ -106,6 +105,14 @@ fun LandingScreen(
         }
     )
 
+    //Coin Detail BottomSheet
+    var uuid by rememberSaveable { mutableStateOf("") }
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+    )
+
+    //Compose Ui
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -146,7 +153,7 @@ fun LandingScreen(
                 onClickedItem = { coin ->
                     scope.launch {
                         showBottomSheet = true
-                        viewModel.getCoinDetail(coin.uuid)
+                        uuid = coin.uuid
                     }
                 },
                 onLoadMore = { index ->
@@ -169,10 +176,13 @@ fun LandingScreen(
 
         if (showBottomSheet) {
             CoinDetailBottomSheet(
-                coinDetailUiState = coinDetailUi,
-                onDismissRequest = { isShowBottomSheet ->
-                    scope.launch {
-                        showBottomSheet = isShowBottomSheet
+                sheetState = sheetState,
+                uuid = uuid,
+                onDismissRequest = {
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (sheetState.isVisible.not()) {
+                            showBottomSheet = false
+                        }
                     }
                 }
             )
@@ -199,7 +209,10 @@ fun WrapLandingContent(
         stateUi.empty.orFalse() -> {
             BaseErrorScreen(
                 title = stringResource(id = R.string.coin_currency_common_search_error_title),
-                message = stringResource(id = R.string.coin_currency_common_search_error_message)
+                message = stringResource(id = R.string.coin_currency_common_search_error_message),
+                modifier = Modifier
+                    .pullRefresh(pullToRefreshState)
+                    .fillMaxSize()
             )
         }
 
@@ -207,7 +220,10 @@ fun WrapLandingContent(
             BaseErrorScreen(
                 icon = Icons.Filled.ErrorOutline,
                 title = stringResource(id = R.string.coin_currency_common_search_error_title),
-                message = stateUi.error.message.orEmpty()
+                message = stateUi.error.message.orEmpty(),
+                modifier = Modifier
+                    .pullRefresh(pullToRefreshState)
+                    .fillMaxSize()
             )
         }
 
@@ -270,7 +286,8 @@ private fun shareContent(context: Context, paintText: String) {
 @Composable
 private fun LandingScreenPreview() {
     LandingScreen(
-        windowSizeClass = WindowWidthSizeClass.Compact
+        windowSizeClass = WindowWidthSizeClass.Compact,
+//        onClickedItem = {}
     )
 }
 

@@ -4,14 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.LandingScreen
+import realaof.realhon.realha.cryptocurrencymini.directions.CoinCurrencyNavHost
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.CryptoCurrencyMiniTheme
 
 @AndroidEntryPoint
@@ -21,21 +21,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        Log.d("AOFAOF","save: "+savedInstanceState)
-
-
         setContent {
             val windowSizeClass = calculateWindowSizeClass(this)
-
-//            val viewModel: LandingViewModel = hiltViewModel()
-//            if (savedInstanceState == null) {
-//                viewModel.getCoinList()
-//            }
+            val navController = rememberNavController()
 
             CoinCurrencyApp(
-                modifier = Modifier,
-                windowSizeClass = windowSizeClass,
-//                viewModel = viewModel
+                navHostController = navController,
+                windowWidthSizeClass = windowSizeClass.widthSizeClass,
             )
         }
     }
@@ -43,15 +35,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun CoinCurrencyApp(
-    modifier: Modifier = Modifier,
-    windowSizeClass: WindowSizeClass,
-//    viewModel: LandingViewModel
+    navHostController: NavHostController,
+    windowWidthSizeClass: WindowWidthSizeClass,
 ) {
     CryptoCurrencyMiniTheme {
-        LandingScreen(
-            modifier = modifier,
-            windowSizeClass = windowSizeClass.widthSizeClass,
-//            viewModel = viewModel
+        CoinCurrencyNavHost(
+            navController = navHostController,
+            windowSizeClass = windowWidthSizeClass
         )
     }
 }
@@ -60,8 +50,9 @@ fun CoinCurrencyApp(
 @Composable
 private fun CoinCurrencyAppPreview() {
     CryptoCurrencyMiniTheme {
-        LandingScreen(
-            windowSizeClass = WindowWidthSizeClass.Compact
+        CoinCurrencyNavHost(
+            navController = rememberNavController(),
+            windowSizeClass = WindowWidthSizeClass.Medium
         )
     }
 }

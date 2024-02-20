@@ -54,7 +54,8 @@ class CoinCurrencyMapperImp @Inject constructor() : CoinCurrencyMapper {
             price = coin.price.toMoneyFormat(NUMBER_WITH_COMMA_AND_DOLLAR_SIGN_5DECIMAL),
             symbol = LandingUiState.LandingUi.CoinUi.CoinSymbol(
                 symbol = coin.symbol.orEmpty(),
-                color = if (coin.color?.length.orZero() >= 7) coin.color ?: "#000000" else "#000000"
+                color = if (coin.color?.length.orZero() in 7..8) coin.color
+                    ?: "#000000" else "#000000"
             ),
             change = LandingUiState.LandingUi.CoinUi.ChangeUi(
                 arrowIcon = if (coin.change.orZero().toFloat()
@@ -82,7 +83,7 @@ class CoinCurrencyMapperImp @Inject constructor() : CoinCurrencyMapper {
                     Color(coin.color?.toColorInt() ?: "#000000".toColorInt())
                 } catch (e: Throwable) {
                     //when cannot convert hex to Color ex. #000
-                    Color("#000000".toColorInt())
+                    Color("#FF000000".toColorInt())
                 }
             ),
             price = coin.price.toMoneyFormat(NUMBER_WITH_COMMA_AND_DOLLAR_2DECIMAL),

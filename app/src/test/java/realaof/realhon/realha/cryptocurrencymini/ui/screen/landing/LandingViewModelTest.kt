@@ -14,7 +14,6 @@ import org.junit.Before
 import org.junit.Test
 import realaof.realhon.realha.cryptocurrencymini.base.extensions.BaseUnitTest
 import realaof.realhon.realha.cryptocurrencymini.base.model.toBaseCommonError
-import realaof.realhon.realha.cryptocurrencymini.data.model.coindetail.CoinDetail
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.Coin
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.CoinCurrency
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.Data
@@ -23,7 +22,6 @@ import realaof.realhon.realha.cryptocurrencymini.domian.mapper.CoinCurrencyMappe
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.GetCoinDetailUseCase
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.GetCoinListUseCase
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.SearchCoinUseCase
-import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.WindowSizeState
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
@@ -152,8 +150,9 @@ class LandingViewModelTest : BaseUnitTest() {
         val limit = 20
         val offset = 0
         val coinCurrency = getCurrency()
+        val loadMoreExpected = getDataTestLoadMore()
         val expectData =
-            LandingUiState(success = coinCurrencyMapper.mapToCoinLandingUi(coinCurrency))
+            LandingUiState(success = coinCurrencyMapper.mapToCoinLandingUi(loadMoreExpected))
 
         coEvery {
             getCoinListUseCase.execute(
@@ -165,7 +164,21 @@ class LandingViewModelTest : BaseUnitTest() {
         } returns Result.success(coinCurrency)
 
         //When
+        viewModel.getCoinList()
         viewModel.getCoinList(isLoadMore = true)
+
+        //Then
+        turbineScope {
+            val response = viewModel.landingUiState.testIn(backgroundScope).awaitItem()
+
+            Assert.assertEquals(expectData.loading, response.loading)
+            Assert.assertEquals(expectData.empty, response.empty)
+            Assert.assertEquals(expectData.error, response.error)
+            Assert.assertEquals(expectData.success, response.success)
+
+            val loadMoreState = viewModel.coinListLoadMoreState.testIn(backgroundScope).awaitItem()
+            Assert.assertEquals(true, loadMoreState.isLoadMore)
+        }
     }
 
     @Test
@@ -382,55 +395,6 @@ class LandingViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun getCoinDetail_Success() = runTest {
-        //Given
-        val uuid = "uuid"
-        val coinDetail = getCoinDetail()
-        val expectData =
-            CoinDetailUiState(success = coinCurrencyMapper.mapToCoinDetailUi(coinDetail))
-
-        coEvery { getCoinDetailUseCase.execute(GetCoinDetailUseCase.Input(uuid)) } returns Result.success(
-            coinDetail
-        )
-
-        //When
-        viewModel.getCoinDetail(uuid)
-
-        //Then
-        turbineScope {
-            val response = viewModel.coinDetailBottomSheetState.testIn(backgroundScope).awaitItem()
-
-            Assert.assertEquals(expectData.loading, response.loading)
-            Assert.assertEquals(expectData.error, response.error)
-            Assert.assertEquals(expectData.success, response.success)
-        }
-    }
-
-    @Test
-    fun getCoinDetail_Failure() = runTest {
-        //Given
-        val uuid = "uuid"
-        val error = Throwable()
-        val expectData = CoinDetailUiState(error = error.toBaseCommonError())
-
-        coEvery { getCoinDetailUseCase.execute(GetCoinDetailUseCase.Input(uuid)) } returns Result.failure(
-            error
-        )
-
-        //When
-        viewModel.getCoinDetail(uuid)
-
-        //Then
-        turbineScope {
-            val response = viewModel.coinDetailBottomSheetState.testIn(backgroundScope).awaitItem()
-
-            Assert.assertEquals(expectData.loading, response.loading)
-            Assert.assertEquals(expectData.error, response.error)
-            Assert.assertEquals(expectData.success, response.success)
-        }
-    }
-
-    @Test
     fun setAdaptiveWindowSize_WindowWidthSizeCompact() = runTest {
         //Given
         val windowWidthSizeClass = WindowWidthSizeClass.Compact
@@ -522,6 +486,48 @@ class LandingViewModelTest : BaseUnitTest() {
         status = "success"
     )
 
+    private fun getDataTestLoadMore() = CoinCurrency(
+        data = Data(
+            coins = listOf(
+                Coin(
+                    uuid = "uuid",
+                    symbol = "SHIB",
+                    name = "Shiba Inu",
+                    color = "#fda32b",
+                    iconUrl = "https://cdn.coinranking.com/fiZ4HfnRR/shib.png",
+                    marketCap = "6072320102",
+                    price = "0.000010300116041616",
+                    listedAt = 1620650373,
+                    change = "8.03",
+                    rank = 20,
+                    tier = 1
+                ),
+                Coin(
+                    uuid = "uuid",
+                    symbol = "SHIB",
+                    name = "Shiba Inu",
+                    color = "#fda32b",
+                    iconUrl = "https://cdn.coinranking.com/fiZ4HfnRR/shib.png",
+                    marketCap = "6072320102",
+                    price = "0.000010300116041616",
+                    listedAt = 1620650373,
+                    change = "8.03",
+                    rank = 20,
+                    tier = 1
+                )
+            ),
+            stats = Stats(
+                total = 33754,
+                totalCoins = 33754,
+                totalMarkets = 40701,
+                totalExchanges = 170,
+                totalMarketCap = "1827927054000",
+                total24hVolume = "224205772261"
+            )
+        ),
+        status = "success"
+    )
+
     private fun getEmptyCoins() = CoinCurrency(
         data = Data(
             coins = emptyList(),
@@ -533,13 +539,6 @@ class LandingViewModelTest : BaseUnitTest() {
                 totalMarketCap = "1827927054000",
                 totalMarkets = 40701
             )
-        ),
-        status = "success"
-    )
-
-    private fun getCoinDetail() = CoinDetail(
-        data = realaof.realhon.realha.cryptocurrencymini.data.model.coindetail.Data(
-            coin = realaof.realhon.realha.cryptocurrencymini.data.model.coindetail.Coin()
         ),
         status = "success"
     )

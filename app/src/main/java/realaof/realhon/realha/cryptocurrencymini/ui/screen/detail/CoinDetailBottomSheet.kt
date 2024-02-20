@@ -4,14 +4,25 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
+import realaof.realhon.realha.cryptocurrencymini.R
+import realaof.realhon.realha.cryptocurrencymini.base.compose.error.BaseErrorScreen
 import realaof.realhon.realha.cryptocurrencymini.base.compose.loading.BaseLoading
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.component.CoinDetailBottomSheetContent
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
@@ -20,51 +31,71 @@ import realaof.realhon.realha.cryptocurrencymini.util.NUMBER_WITH_COMMA_AND_DOLL
 import realaof.realhon.realha.cryptocurrencymini.util.orFalse
 import realaof.realhon.realha.cryptocurrencymini.util.toMoneyFormat
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CoinDetailBottomSheet(
     modifier: Modifier = Modifier,
-    coinDetailUiState: CoinDetailUiState,
-    onDismissRequest: (Boolean) -> Unit = {}
+    uuid: String,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    viewModel: CoinDetailBottomSheetViewModel = hiltViewModel()
 ) {
-    when {
-        coinDetailUiState.loading.orFalse() -> BaseLoading()
-
-        coinDetailUiState.error != null -> {}
-
-        coinDetailUiState.success != null -> {
-            WrapContentCoinDetailBottomSheet(
-                coinDetailUi = coinDetailUiState.success,
-                modifier = modifier,
-                onDismissRequest = onDismissRequest
-            )
-        }
+    LaunchedEffect(key1 = viewModel) {
+        viewModel.getCoinDetail(uuid)
     }
+
+    val coinDetailUiState by viewModel.coinDetailBottomSheetState.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+
+
+    WrapContentCoinDetailBottomSheet(
+        coinDetailUiState = coinDetailUiState,
+        sheetState = sheetState,
+        onDismissRequest = {
+            scope.launch {
+                viewModel.clearCoinDetailStateValue()
+                onDismissRequest()
+            }
+        },
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WrapContentCoinDetailBottomSheet(
     modifier: Modifier = Modifier,
-    coinDetailUi: CoinDetailUiState.CoinDetailUi,
-    onDismissRequest: (Boolean) -> Unit = {}
+    coinDetailUiState: CoinDetailUiState,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
 ) {
-    val bottomSheetState = rememberModalBottomSheetState()
-    val context = LocalContext.current
+    when {
+        coinDetailUiState.loading.orFalse() -> BaseLoading(modifier = modifier.fillMaxSize())
 
-    ModalBottomSheet(
-        windowInsets = WindowInsets.navigationBars,
-        sheetState = bottomSheetState,
-        modifier = modifier,
-        onDismissRequest = {
-            onDismissRequest(false)
-        }
-    ) {
-        CoinDetailBottomSheetContent(
-            coinDetailUi = coinDetailUi,
-            onClickedWebsiteButton = { webUrl ->
-                goToExternalBrowser(webUrl, context)
-            }
+        coinDetailUiState.error != null -> BaseErrorScreen(
+            title = stringResource(id = R.string.coin_currency_common_search_error_title),
+            message = stringResource(id = R.string.coin_currency_common_search_error_message),
+            modifier = Modifier
         )
+
+        coinDetailUiState.success != null -> {
+            val context = LocalContext.current
+
+            ModalBottomSheet(
+                windowInsets = WindowInsets.navigationBars,
+                sheetState = sheetState,
+                onDismissRequest = onDismissRequest,
+                modifier = modifier,
+            ) {
+                CoinDetailBottomSheetContent(
+                    coinDetailUi = coinDetailUiState.success,
+                    onClickedWebsiteButton = { webUrl ->
+                        goToExternalBrowser(webUrl, context)
+                    },
+                    modifier = modifier
+                )
+            }
+        }
     }
 }
 

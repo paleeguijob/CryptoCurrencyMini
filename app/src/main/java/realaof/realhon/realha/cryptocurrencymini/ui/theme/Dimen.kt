@@ -15,8 +15,9 @@ class Dimension(
     val dimen_20: Dp = 20.dp,
     val dimen_22: Dp = 22.dp,
     val dimen_24: Dp = 24.dp,
+    val dimen_32: Dp = 32.dp,
     val dimen_40: Dp = 40.dp,
     val dimen_48: Dp = 48.dp,
     val dimen_50: Dp = 50.dp,
-    val dimen_125: Dp = 125.dp
+    val dimen_106: Dp = 106.dp
 )

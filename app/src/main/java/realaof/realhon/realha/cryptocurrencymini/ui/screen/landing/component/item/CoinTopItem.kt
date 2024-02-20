@@ -7,7 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.toColorInt
 import coil.compose.rememberAsyncImagePainter
@@ -43,7 +45,8 @@ fun CoinTopItem(
             defaultElevation = dimen.dimen_2
         ),
         modifier = modifier
-            .widthIn(max = dimen.dimen_125)
+            .wrapContentHeight()
+            .width(dimen.dimen_106)
             .clickable {
                 onClickedItem(coinUi)
             }
@@ -76,6 +79,7 @@ fun CoinTopItem(
                 style = MaterialTheme.typography.titleLarge.copy(
                     color = Color(coinUi.symbol.color.toColorInt())
                 ),
+                maxLines = 1,
                 modifier = Modifier
                     .padding(vertical = dimen.dimen_8)
                     .clearAndSetSemantics {
@@ -87,6 +91,8 @@ fun CoinTopItem(
                 style = MaterialTheme.typography.titleSmall.copy(
                     color = DustyGray
                 ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .padding(bottom = dimen.dimen_8)
                     .clearAndSetSemantics {
