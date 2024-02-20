@@ -206,6 +206,7 @@ fun TextWithTrend(
                 color = Color(changeUi.color.toColorInt()),
                 fontWeight = FontWeight.W700,
             ),
+            maxLines = 1,
             modifier = Modifier.clearAndSetSemantics {
                 contentDescription = "Coin Text With Change., Change: ${changeUi.change}"
             }

@@ -57,9 +57,7 @@ fun CoinCurrencyList(
     onLoadMore: (Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val listState = rememberLazyListState(
-        initialFirstVisibleItemIndex = landingUi.coins.size - 1
-    )
+    val listState = rememberLazyListState()
 
     val keyboard = LocalSoftwareKeyboardController.current
 

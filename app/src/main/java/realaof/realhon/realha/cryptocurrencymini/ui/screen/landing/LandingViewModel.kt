@@ -17,7 +17,6 @@ import realaof.realhon.realha.cryptocurrencymini.domian.mapper.CoinCurrencyMappe
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.GetCoinDetailUseCase
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.GetCoinListUseCase
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.SearchCoinUseCase
-import realaof.realhon.realha.cryptocurrencymini.ui.screen.detail.uimodel.CoinDetailUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.WindowSizeState
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.remember.CoinListLoadMoreState
@@ -43,10 +42,6 @@ class LandingViewModel @Inject constructor(
     val landingUiState: StateFlow<LandingUiState> get() = _landingUiState.asStateFlow()
 
     val keyword = savedStateHandle.getStateFlow(key = KEYWORDS_KEY, initialValue = "")
-
-    private val _coinDetailBottomSheetState = MutableStateFlow(CoinDetailUiState(loading = true))
-    val coinDetailBottomSheetState: StateFlow<CoinDetailUiState>
-        get() = _coinDetailBottomSheetState.asStateFlow()
 
     private val _offset = MutableStateFlow(FIRST_PAGE)
 
@@ -119,20 +114,6 @@ class LandingViewModel @Inject constructor(
             .onFailure { error ->
                 _landingUiState.set(LandingUiState(error = error.toBaseCommonError()))
             }
-    }
-
-    fun getCoinDetail(uuid: String) {
-        viewModelScope.launch {
-            getCoinDetailUseCase.execute(GetCoinDetailUseCase.Input(uuid = uuid))
-                .onSuccess { response ->
-                    _coinDetailBottomSheetState.set(
-                        CoinDetailUiState(success = coinCurrencyMapper.mapToCoinDetailUi(response))
-                    )
-                }
-                .onFailure { error ->
-                    _coinDetailBottomSheetState.set(CoinDetailUiState(error = error.toBaseCommonError()))
-                }
-        }
     }
 
     fun initCoinList() {
@@ -208,7 +189,6 @@ class LandingViewModel @Inject constructor(
             }
 
             else -> {
-
                 _coinListLoadMoreState.set(CoinListLoadMoreState(loadingMore = true))
 
                 appendCoinList(response)
@@ -251,9 +231,5 @@ class LandingViewModel @Inject constructor(
 
     fun onSearchValueChange(keyword: String) {
         savedStateHandle[KEYWORDS_KEY] = keyword
-    }
-
-    private fun MutableStateFlow<CoinDetailUiState>.set(coinDetailUi: CoinDetailUiState) {
-        this.value = coinDetailUi
     }
 }

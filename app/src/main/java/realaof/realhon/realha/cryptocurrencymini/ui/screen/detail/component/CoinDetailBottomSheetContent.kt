@@ -47,7 +47,7 @@ fun CoinDetailBottomSheetContent(
             ),
             modifier = Modifier.fillMaxWidth()
         )
-        HorizontalDivider(color = SearchBg)
+        HorizontalDivider(color = SearchBg, modifier = Modifier.padding(vertical = dimen.dimen_8))
         Text(
             text = stringResource(id = R.string.coin_currency_detail_coin_detail_button_text_go_to_web_site),
             textAlign = TextAlign.Center,
