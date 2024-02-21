@@ -256,7 +256,7 @@ fun LandingContent(
     onLoadMore: (Int) -> Unit,
 ) {
     CoinCurrencyList(
-        windowSizeState = adaptiveWindowSizeState,
+        windowAdaptiveSizeState = adaptiveWindowSizeState,
         landingUi = landingUi,
         pullToRefreshState = pullToRefreshState,
         coinListLoadMoreState = coinListLoadMoreState,
@@ -287,7 +287,6 @@ private fun shareContent(context: Context, paintText: String) {
 private fun LandingScreenPreview() {
     LandingScreen(
         windowSizeClass = WindowWidthSizeClass.Compact,
-//        onClickedItem = {}
     )
 }
 

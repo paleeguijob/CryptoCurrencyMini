@@ -25,8 +25,16 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
             isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -54,6 +62,29 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    //build variant
+//    buildTypes {
+//        getByName("release") {
+//            // Enables code shrinking, obfuscation, and optimization for only
+//            // your project's release build type. Make sure to use a build
+//            // variant with `isDebuggable=false`.
+//            isMinifyEnabled = true
+//
+//            // Enables resource shrinking, which is performed by the
+//            // Android Gradle plugin.
+//            isShrinkResources = true
+//
+//            // Includes the default ProGuard rules files that are packaged with
+//            // the Android Gradle plugin. To learn more, go to the section about
+//            // R8 configuration files.
+//            proguardFiles(
+//                getDefaultProguardFile("proguard-android-optimize.txt"),
+//                "proguard-rules.pro"
+//            )
+//        }
+//    }
+
 }
 
 dependencies {

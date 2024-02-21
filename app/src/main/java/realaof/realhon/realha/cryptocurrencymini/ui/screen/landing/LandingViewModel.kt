@@ -1,7 +1,10 @@
 package realaof.realhon.realha.cryptocurrencymini.ui.screen.landing
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -38,19 +41,20 @@ class LandingViewModel @Inject constructor(
         const val KEYWORDS_KEY = "KEYWORDS_KEY"
     }
 
+    private val _windowAdaptiveState =
+        MutableStateFlow(WindowSizeState(windowAdaptive = WindowSizeState.default))
+    val windowAdaptiveState: StateFlow<WindowSizeState> get() = _windowAdaptiveState.asStateFlow()
+
     private val _landingUiState = MutableStateFlow(LandingUiState(loading = true))
     val landingUiState: StateFlow<LandingUiState> get() = _landingUiState.asStateFlow()
 
-    val keyword = savedStateHandle.getStateFlow(key = KEYWORDS_KEY, initialValue = "")
+    private val _coinListLoadMoreState = MutableStateFlow(CoinListLoadMoreState(loadingMore = true))
+    val coinListLoadMoreState: StateFlow<CoinListLoadMoreState> get() = _coinListLoadMoreState.asStateFlow()
 
     private val _offset = MutableStateFlow(FIRST_PAGE)
 
-    private val _windowAdaptiveState =
-        MutableStateFlow(WindowSizeState(portrait = WindowSizeState.default))
-    val windowAdaptiveState: StateFlow<WindowSizeState> get() = _windowAdaptiveState.asStateFlow()
+    val keyword = savedStateHandle.getStateFlow(key = KEYWORDS_KEY, initialValue = "")
 
-    private val _coinListLoadMoreState = MutableStateFlow(CoinListLoadMoreState(loadingMore = true))
-    val coinListLoadMoreState: StateFlow<CoinListLoadMoreState> get() = _coinListLoadMoreState.asStateFlow()
 
     fun getCoinList(
         limit: Int = PAGE_SIZE,
@@ -121,7 +125,7 @@ class LandingViewModel @Inject constructor(
         getCoinList()
     }
 
-    fun loadMoreCoins(keyword: String? = null, index: Int = 0) = viewModelScope.launch {
+    fun loadMoreCoins(keyword: String? = null, index: Int = FIRST_PAGE) = viewModelScope.launch {
         if (index < PAGE_SIZE - 1) return@launch
 
         loadNextPage()
@@ -137,29 +141,51 @@ class LandingViewModel @Inject constructor(
         when (windowWidthSizeClass) {
             WindowWidthSizeClass.Compact -> {
                 _windowAdaptiveState.value = WindowSizeState(
-                    portrait = WindowSizeState.WindowAdaptive(
+                    windowAdaptive = WindowSizeState.WindowAdaptive(
                         adaptiveColumn = 1,
-                        verticalArrangement = Arrangement.spacedBy(dimen.dimen_16)
+                        horizontalArrangement = WindowSizeState.CoinHorizontalAlignment(
+                            topRankHorizontalAlignment = Alignment.Start,
+                            lazyHorizontalArrangement = Arrangement.Start
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(dimen.dimen_16),
+                        coinTextAlign = WindowSizeState.CoinTextAlignment(textAlign = TextAlign.Start),
+                        paddingValue = PaddingValues(
+                            vertical = dimen.dimen_24, horizontal = dimen.dimen_16
+                        )
                     )
                 )
             }
 
             WindowWidthSizeClass.Medium -> {
                 _windowAdaptiveState.value = WindowSizeState(
-                    portrait = WindowSizeState.WindowAdaptive(
+                    windowAdaptive = WindowSizeState.WindowAdaptive(
                         adaptiveColumn = 1,
-                        horizontalArrangement = Arrangement.spacedBy(dimen.dimen_8),
-                        verticalArrangement = Arrangement.spacedBy(dimen.dimen_16)
+                        horizontalArrangement = WindowSizeState.CoinHorizontalAlignment(
+                            topRankHorizontalAlignment = Alignment.Start,
+                            lazyHorizontalArrangement = Arrangement.Start
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(dimen.dimen_16),
+                        coinTextAlign = WindowSizeState.CoinTextAlignment(textAlign = TextAlign.Start),
+                        paddingValue = PaddingValues(
+                            vertical = dimen.dimen_24, horizontal = dimen.dimen_16
+                        )
                     )
                 )
             }
 
             WindowWidthSizeClass.Expanded -> {
                 _windowAdaptiveState.value = WindowSizeState(
-                    landscape = WindowSizeState.WindowAdaptive(
+                    windowAdaptive = WindowSizeState.WindowAdaptive(
                         adaptiveColumn = 3,
-                        horizontalArrangement = Arrangement.spacedBy(dimen.dimen_8),
-                        verticalArrangement = Arrangement.spacedBy(dimen.dimen_16)
+                        horizontalArrangement = WindowSizeState.CoinHorizontalAlignment(
+                            topRankHorizontalAlignment = Alignment.CenterHorizontally,
+                            lazyHorizontalArrangement = Arrangement.spacedBy(dimen.dimen_8),
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(dimen.dimen_16),
+                        coinTextAlign = WindowSizeState.CoinTextAlignment(textAlign = TextAlign.Center),
+                        paddingValue = PaddingValues(
+                            vertical = dimen.dimen_24, horizontal = dimen.dimen_16
+                        )
                     )
                 )
             }

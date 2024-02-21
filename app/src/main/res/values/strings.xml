@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CryptoCurrencyMini</string>
+    <string name="app_name">Coin mini</string>
 
     <!-- Coin Currency Common-->
     <string name="coin_currency_common_search">Search</string>
