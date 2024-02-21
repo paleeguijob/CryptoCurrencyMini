@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import realaof.realhon.realha.cryptocurrencymini.base.model.toBaseCommonError
 import realaof.realhon.realha.cryptocurrencymini.data.model.coinscurrency.CoinCurrency
 import realaof.realhon.realha.cryptocurrencymini.domian.mapper.CoinCurrencyMapper
-import realaof.realhon.realha.cryptocurrencymini.domian.usecase.GetCoinDetailUseCase
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.GetCoinListUseCase
 import realaof.realhon.realha.cryptocurrencymini.domian.usecase.SearchCoinUseCase
 import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.LandingUiState
@@ -30,7 +29,6 @@ import javax.inject.Inject
 class LandingViewModel @Inject constructor(
     private val getCoinListUseCase: GetCoinListUseCase,
     private val searchCoinUseCase: SearchCoinUseCase,
-    private val getCoinDetailUseCase: GetCoinDetailUseCase,
     private val coinCurrencyMapper: CoinCurrencyMapper,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
