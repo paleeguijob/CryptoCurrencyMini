@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,14 +21,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.woong.compose.grid.SimpleGridCells
@@ -44,11 +42,11 @@ import realaof.realhon.realha.cryptocurrencymini.ui.screen.landing.uimodel.remem
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.Orange
 import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CoinCurrencyList(
     modifier: Modifier = Modifier,
-    windowSizeState: WindowSizeState,
+    windowAdaptiveSizeState: WindowSizeState,
     landingUi: LandingUiState.LandingUi,
     pullToRefreshState: PullRefreshState,
     coinListLoadMoreState: CoinListLoadMoreState,
@@ -61,43 +59,18 @@ fun CoinCurrencyList(
 
     val keyboard = LocalSoftwareKeyboardController.current
 
-    when {
-        windowSizeState.portrait != null -> {
-            CoinListContent(
-                landingUi = landingUi,
-                windowSizeState = windowSizeState,
-                listState = listState,
-                contentPadding = PaddingValues(
-                    vertical = dimen.dimen_24,
-                    horizontal = dimen.dimen_16
-                ),
-                pullToRefreshState = pullToRefreshState,
-                coinListLoadMoreState = coinListLoadMoreState,
-                onClickedItem = onClickedItem,
-                onClickedItemToShared = onClickedItemToShared,
-                onLoadMore = onLoadMore,
-                modifier = modifier
-            )
-        }
-
-        windowSizeState.landscape != null -> {
-            CoinListContent(
-                landingUi = landingUi,
-                windowSizeState = windowSizeState,
-                listState = listState,
-                contentPadding = PaddingValues(
-                    vertical = dimen.dimen_24,
-                    horizontal = dimen.dimen_16
-                ),
-                pullToRefreshState = pullToRefreshState,
-                coinListLoadMoreState = coinListLoadMoreState,
-                onClickedItem = onClickedItem,
-                onClickedItemToShared = onClickedItemToShared,
-                onLoadMore = onLoadMore,
-                modifier = modifier
-            )
-        }
-    }
+    CoinListContent(
+        landingUi = landingUi,
+        windowAdaptive = windowAdaptiveSizeState.windowAdaptive ?: WindowSizeState.WindowAdaptive(),
+        listState = listState,
+        coinListLoadMoreState = coinListLoadMoreState,
+        pullToRefreshState = pullToRefreshState,
+        contentPadding = windowAdaptiveSizeState.windowAdaptive?.paddingValue ?: PaddingValues(),
+        onClickedItem = onClickedItem,
+        onClickedItemToShared = onClickedItemToShared,
+        onLoadMore = onLoadMore,
+        modifier = modifier
+    )
 
     LaunchedEffect(key1 = listState) {
         snapshotFlow { listState.isScrollInProgress }
@@ -116,7 +89,7 @@ fun CoinCurrencyList(
 fun CoinListContent(
     modifier: Modifier = Modifier,
     landingUi: LandingUiState.LandingUi,
-    windowSizeState: WindowSizeState,
+    windowAdaptive: WindowSizeState.WindowAdaptive,
     listState: LazyListState,
     coinListLoadMoreState: CoinListLoadMoreState,
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -126,13 +99,6 @@ fun CoinListContent(
     onLoadMore: (Int) -> Unit = {},
 ) {
     val context = LocalContext.current
-    val windowSize = windowSizeState.landscape ?: windowSizeState.portrait
-    val isExpand = when {
-        windowSizeState.landscape != null -> true
-        windowSizeState.portrait != null -> false
-        else -> false
-    }
-
     val scope = rememberCoroutineScope()
 
     LazyColumn(
@@ -145,7 +111,7 @@ fun CoinListContent(
         item {
             if (landingUi.isShowTopPicks) {
                 CoinTopList(
-                    isExpandable = isExpand,
+                    horizontalAlignment = windowAdaptive.horizontalArrangement.topRankHorizontalAlignment,
                     topPicks = landingUi.topPicks,
                     onClickedItem = onClickedItem,
                     modifier = Modifier
@@ -161,7 +127,7 @@ fun CoinListContent(
             Text(
                 text = stringResource(id = R.string.coin_currency_coin_list_title),
                 style = MaterialTheme.typography.titleMedium,
-                textAlign = if (isExpand) TextAlign.Center else TextAlign.Start,
+                textAlign = windowAdaptive.coinTextAlign.textAlign,
                 modifier = Modifier
                     .fillParentMaxWidth()
                     .padding(bottom = dimen.dimen_24)
@@ -173,10 +139,10 @@ fun CoinListContent(
             )
 
             CoinVerticalGridList(
-                columns = SimpleGridCells.Fixed(windowSize?.adaptiveColumn ?: 1),
+                columns = SimpleGridCells.Fixed(windowAdaptive.adaptiveColumn),
                 landingUi = landingUi,
-                horizontalArrangement = windowSize?.horizontalArrangement ?: Arrangement.Start,
-                verticalArrangement = windowSize?.verticalArrangement ?: Arrangement.Top,
+                horizontalArrangement = windowAdaptive.horizontalArrangement.lazyHorizontalArrangement,
+                verticalArrangement = windowAdaptive.verticalArrangement,
                 onClickedItem = onClickedItem,
                 onClickedItemToShared = onClickedItemToShared,
                 modifier = Modifier
@@ -317,7 +283,7 @@ private fun CoinCurrencyListPreview() {
         onClickedItemToShared = {},
         onClickedItem = {},
         onLoadMore = {},
-        windowSizeState = WindowSizeState(portrait = WindowSizeState.WindowAdaptive()),
+        windowAdaptiveSizeState = WindowSizeState(windowAdaptive = WindowSizeState.WindowAdaptive()),
         modifier = Modifier.fillMaxSize()
     )
 }

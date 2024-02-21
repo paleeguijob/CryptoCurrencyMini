@@ -37,14 +37,15 @@ import realaof.realhon.realha.cryptocurrencymini.ui.theme.dimen
 @Composable
 fun CoinTopList(
     modifier: Modifier = Modifier,
-    isExpandable: Boolean,
+    horizontalAlignment: Alignment.Horizontal,
     topPicks: List<LandingUiState.LandingUi.CoinUi>,
     onClickedItem: (LandingUiState.LandingUi.CoinUi) -> Unit = {}
 ) {
     val coin3TopPicks by remember { mutableStateOf(topPicks) }
 
     Column(
-        horizontalAlignment = if (isExpandable) Alignment.CenterHorizontally else Alignment.Start,
+//        horizontalAlignment = if (isExpandable) Alignment.CenterHorizontally else Alignment.Start,
+        horizontalAlignment = horizontalAlignment,
         modifier = modifier,
     ) {
         TextInline(
@@ -134,7 +135,8 @@ private fun CoinTopListPreview() {
                 )
             )
         ),
-        isExpandable = false,
+//        isExpandable = false,
+        horizontalAlignment = Alignment.CenterHorizontally,
         onClickedItem = {}
     )
 }
@@ -196,7 +198,7 @@ private fun CoinCurrencyListPreview() {
         onClickedItemToShared = {},
         onClickedItem = {},
         onLoadMore = {},
-        windowSizeState = WindowSizeState(portrait = WindowSizeState.WindowAdaptive()),
+        windowAdaptiveSizeState = WindowSizeState(windowAdaptive = WindowSizeState.WindowAdaptive()),
         modifier = Modifier.fillMaxSize()
     )
 }
